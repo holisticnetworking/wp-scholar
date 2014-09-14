@@ -24,9 +24,44 @@ class ScholarAward {
 				),
 			'description'	=> 	'Lauds awards and honors',
 			'public'		=> true,
-			'supports'		=> array('title', 'thumbnail'),
-			'taxonomies'	=> array('category', 'post_tag')
+			'supports'		=> array('thumbnail'),
+			'taxonomies'	=> array(),
+			'register_meta_box_cb'	=> 'ScholarAward::add_meta_boxes'
 		));
+	}
+	
+	public function add_meta_boxes() {
+		add_meta_box( 'award-details', 'Award Details', 'ScholarAward::details', 'award', 'main', 'high' );
+	}
+	
+	
+	public function details( $post ) {
+		// Use nonce for verification
+		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_award_details_nonce' );
+		$award		= get_post_meta( $post->ID, 'scholar_award_details', true );
+		
+		echo '<p><label for="scholar_award_details_title">Award Title (overrides what is provided by the feed itself):</label></p>';
+			echo '<p><input type="text" id="scholar_award_details_title" name="scholar_award_details[title]" value="'.esc_attr($award['title']).'" size="10" maxlength="200" /></p>';
+		echo '<p><label for="scholar_award_details_description">Feed Description:</label></p>';
+			echo '<p><textarea id="scholar_award_details_description" name="scholar_award_details[description]">'.esc_attr($award['description']).'</textarea></p>';
+	}
+	public function save_details( $post_id ) {
+		// Refuse without valid nonce:
+		if ( ! isset( $_POST['scholar_award_details_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_award_details_nonce'], plugin_basename( __FILE__ ) ) ) return;
+		
+		//sanitize user input
+		$award	= array();
+		foreach( $_POST['scholar_award_details'] as $key=>$value ) :
+			$award[$key]	= anitize_text_field( $value );
+		endforeach;
+		if(!empty($award)) :
+			// Save the data:
+			add_post_meta($post_id, 'scholar_award_details', $award, true) or update_post_meta( $post_id, 'scholar_award_details', $award);
+		endif;
+	}
+	
+	public function ScholarAward() {
+		add_action( 'save_post', 'ScholarAward::save_details' );
 	}
 }
 ?>

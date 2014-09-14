@@ -72,16 +72,16 @@ class WPScholar {
 			<form id="content-types" method="post" action="">
 				<?php wp_nonce_field( 'content_types', 'content-types-nonce' ) ?>
 				<ul>
-					<li><input type="checkbox" name="types[]" value="post" id="post" <?php if(in_array('post', $types)) : echo 'checked="checked"'; endif; ?>><label for="post">Blog Posts</label></li>
-					<li><input type="checkbox" name="types[]" value="page" id="page" <?php if(in_array('page', $types)) : echo 'checked="checked"'; endif; ?>><label for="page">Pages</label></li>
-					<li><input type="checkbox" name="types[]" value="publication" id="publication" <?php if(in_array('publication', $types)) : echo 'checked="checked"'; endif; ?>><label for="publication">Publications</label></li>
-					<li><input type="checkbox" name="types[]" value="research" id="research" <?php if(in_array('research', $types)) : echo 'checked="checked"'; endif; ?>><label for="research">Research</label></li>
-					<li><input type="checkbox" name="types[]" value="course" id="course" <?php if(in_array('course', $types)) : echo 'checked="checked"'; endif; ?>><label for="course">Courses</label></li>
-					<li><input type="checkbox" name="types[]" value="grad_study" id="grad_study" <?php if(in_array('grad_study', $types)) : echo 'checked="checked"'; endif; ?>><label for="grad_study">Grad Studies</label></li>
-					<li><input type="checkbox" name="types[]" value="person" id="person" <?php if(in_array('person', $types)) : echo 'checked="checked"'; endif; ?>><label for="person">People</label></li>
-					<li><input type="checkbox" name="types[]" value="award" id="award" <?php if(in_array('award', $types)) : echo 'checked="checked"'; endif; ?>><label for="award">Awards and Honors</label></li>
-					<li><input type="checkbox" name="types[]" value="feed" id="feed" <?php if(in_array('feed', $types)) : echo 'checked="checked"'; endif; ?>><label for="feed">RSS Feeds</label></li>
-					<li><input type="checkbox" name="types[]" value="news" id="news" <?php if(in_array('news', $types)) : echo 'checked="checked"'; endif; ?>><label for="news">News Items</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="post" id="post" <?php if(in_array('post', $types)) : echo 'checked="checked"'; endif; ?>><label for="post">Blog Posts</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="page" id="page" <?php if(in_array('page', $types)) : echo 'checked="checked"'; endif; ?>><label for="page">Pages</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="publication" id="publication" <?php if(in_array('publication', $types)) : echo 'checked="checked"'; endif; ?>><label for="publication">Publications</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="research" id="research" <?php if(in_array('research', $types)) : echo 'checked="checked"'; endif; ?>><label for="research">Research</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="course" id="course" <?php if(in_array('course', $types)) : echo 'checked="checked"'; endif; ?>><label for="course">Courses</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="grad_study" id="grad_study" <?php if(in_array('grad_study', $types)) : echo 'checked="checked"'; endif; ?>><label for="grad_study">Grad Studies</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="person" id="person" <?php if(in_array('person', $types)) : echo 'checked="checked"'; endif; ?>><label for="person">People</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="award" id="award" <?php if(in_array('award', $types)) : echo 'checked="checked"'; endif; ?>><label for="award">Awards and Honors</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="feed" id="feed" <?php if(in_array('feed', $types)) : echo 'checked="checked"'; endif; ?>><label for="feed">RSS Feeds</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="news" id="news" <?php if(in_array('news', $types)) : echo 'checked="checked"'; endif; ?>><label for="news">News Items</label></li>
 				</ul>
 				<input type="submit" value="Update Allowed Content Types" class="button button-primary" name="submit" id="submit" />
 			</form>
@@ -99,19 +99,19 @@ class WPScholar {
 			foreach($types as $type) :
 				if($type != 'post' && $type != 'page') :
 					include( plugin_dir_path(__FILE__) . 'cpt/' . $type . '.class.php' );
-					$call	= 'WPScholar' . ucwords($type);
+					$call	= 'WPScholar' . implode( ucwords( explode( '_', $type ) ) );
 					if(class_exists($call)) :
 						$$type	= new $call;
 						$$type->register_type();
 					endif;
 				endif;
 			endforeach; 
-			/* if(!in_array('post', $types)) :
+			if(!in_array('post', $types)) :
 				WPScholar::unregister_type('post');
 			endif;
 			if(!in_array('page', $types)) :
 				WPScholar::unregister_type('page');
-			endif; */
+			endif;
 		endif;
 	}
 	
