@@ -5,12 +5,14 @@ Creates post types that match scholarly content types.
 
 Content Types
 =============
-- Feeds
 - Publications
 - People (undergrads, interns)
+- Research
 - Gallery
 - Courses
 - Graduate Studies
+- Awards, Honors
+- Feeds
 
 Installation
 ============
