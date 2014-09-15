@@ -29,7 +29,7 @@ class ScholarPerson {
 		));
 	}
 	
-	public function add_meta_boxes() {
+	public static function add_meta_boxes() {
 		add_meta_box( 'name', 'Name', 'ScholarPerson::name', 'people', 'normal', 'high' );
 		add_meta_box( 'title', 'Titles', 'ScholarPerson::title', 'people', 'normal', 'high' );
 		add_meta_box( 'education', 'Education', 'ScholarPerson::education', 'people', 'normal', 'high' );
@@ -40,7 +40,7 @@ class ScholarPerson {
 	
 	
 	
-	public function name( $post ) {
+	public static function name( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_name_nonce' );
 		$prefix		= get_post_meta( $post->ID, 'scholar_prefix', true );
@@ -63,7 +63,7 @@ class ScholarPerson {
 		echo '<label for="scholar_name_suffix">Suffix:</label>';
 			echo '<input type="text" id="scholar_name_suffix" name="scholar_name_suffix" value="'.esc_attr($suffix).'" size="5" maxlength="20" />';
 	}
-	function save_name( $post_id ) {
+	public static function save_name( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_name_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_name_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		
@@ -86,7 +86,7 @@ class ScholarPerson {
 	
 	
 	
-	public function title( $post ) {
+	public static function title( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_title_nonce' );
 		$titles		= get_post_meta( $post->ID, 'scholar_title', true);
@@ -102,7 +102,7 @@ class ScholarPerson {
 		echo '</fieldset>';
 		echo '<input type="button" id="new-title" value="Add Title">';
 	}
-	public function save_title( $post_id ) {
+	public static function save_title( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_title_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_title_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		$save	= array();
@@ -117,7 +117,7 @@ class ScholarPerson {
 	
 	
 	
-	public function education( $post ) {
+	public static function education( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_education_nonce' );
 		$degrees	= get_post_meta( $post->ID, 'scholar_education', true);
@@ -143,7 +143,7 @@ class ScholarPerson {
 		echo '</fieldset>';
 		echo '<input type="button" id="new-degree" value="Add Degree">';
 	}
-	public function save_education( $post_id ) {
+	public static function save_education( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_education_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_education_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		$save	= array();
@@ -163,7 +163,7 @@ class ScholarPerson {
 	
 	
 	
-	public function address( $post ) {
+	public static function address( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_address_nonce' );
 		$address	= get_post_meta( $post->ID, 'scholar_address', true );
@@ -207,7 +207,7 @@ class ScholarPerson {
 		echo '<label for="scholar_fax">Fax:</label>';
 			echo '<input type="text" id="scholar_fax" name="scholar_address[fax]" value="'.esc_attr($address['fax']).'" size="20" maxlength="100" /></p>';
 	}
-	function save_address( $post_id ) {
+	public static function save_address( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_address_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_address_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		
@@ -231,7 +231,7 @@ class ScholarPerson {
 	
 	
 	
-	public function web( $post ) {
+	public static function web( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_web_nonce' );
 		$url	= get_post_meta( $post->ID, 'scholar_url', true );
@@ -243,7 +243,7 @@ class ScholarPerson {
 		echo '<p><label for="scholar_url">Web Site:</label>';
 			echo '<input type="text" id="scholar_url" name="scholar_url" value="'.esc_attr($url).'" size="50" maxlength="100" />';
 	}
-	function save_web( $post_id ) {
+	public static function save_web( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_address_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_address_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		//sanitize user input
@@ -258,7 +258,7 @@ class ScholarPerson {
 	
 	
 	
-	public function bio( $post ) {
+	public static function bio( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_bio_nonce' );
 		$bio	= get_post_meta( $post->ID, 'scholar_bio', true );
@@ -266,7 +266,7 @@ class ScholarPerson {
 		// Form inputs:
 		wp_editor( $bio, 'biotext', $settings = array() );
 	}
-	function save_bio( $post_id ) {
+	public static function save_bio( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_bio_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_bio_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		
@@ -282,7 +282,7 @@ class ScholarPerson {
 	/*
 	// Replace Person "titles," which don't exist, with the person's name.
 	*/
-	public function replace_title($title, $id) {
+	public static function replace_title($title, $id) {
 		global $id, $post;
 		if ( $id && $post && $post->post_type == 'people' ) :
 			$name['prefix']		= get_post_meta( $post->ID, 'scholar_prefix', true );
@@ -301,7 +301,7 @@ class ScholarPerson {
 	/*
 	// Replace Person "titles," which don't exist, with the person's name.
 	*/
-	public function replace_content($content) {
+	public static function replace_content($content) {
 		global $post;
 		$type	= get_post_type( $post );
 		if($type == 'people') :

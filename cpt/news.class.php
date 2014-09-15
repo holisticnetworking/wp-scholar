@@ -31,12 +31,12 @@ class ScholarNews {
 	}
 	
 	
-	public function add_meta_boxes() {
+	public static function add_meta_boxes() {
 		add_meta_box( 'news-date', 'Date of Event', 'ScholarNews::date', 'news', 'side', 'high' );
 	}
 	
 	
-	public function date( $post ) {
+	public static function date( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_news_date_nonce' );
 		$date		= get_post_meta( $post->ID, 'scholar_news_date', true );
@@ -47,7 +47,7 @@ class ScholarNews {
 		echo '<p><label for="scholar_news_date">This can be different than publish date:</label></p>';
 			echo '<p><input type="text" id="scholar_news_date" name="scholar_news_date" value="'.esc_attr($date).'" size="10" maxlength="20" /></p>';
 	}
-	public function save_date( $post_id ) {
+	public static function save_date( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_news_date_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_news_date_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		

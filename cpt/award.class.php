@@ -35,7 +35,7 @@ class ScholarAward {
 	}
 	
 	
-	public function details( $post ) {
+	public static function details( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_award_details_nonce' );
 		$award		= get_post_meta( $post->ID, 'scholar_award_details', true );
@@ -45,7 +45,7 @@ class ScholarAward {
 		echo '<p><label for="scholar_award_details_description">Feed Description:</label></p>';
 			echo '<p><textarea id="scholar_award_details_description" name="scholar_award_details[description]">'.esc_attr($award['description']).'</textarea></p>';
 	}
-	public function save_details( $post_id ) {
+	public static function save_details( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_award_details_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_award_details_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		

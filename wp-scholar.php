@@ -99,7 +99,9 @@ class WPScholar {
 			foreach($types as $type) :
 				if($type != 'post' && $type != 'page') :
 					include( plugin_dir_path(__FILE__) . 'cpt/' . $type . '.class.php' );
-					$call	= 'WPScholar' . implode( ucwords( explode( '_', $type ) ) );
+					// w00t! This means: convert from under_scores to CamelCase:
+					$call	= 'Scholar' . preg_replace_callback( '/(?:^|_)(.?)/', function( $i ) { return strtoupper( $i[0] ); }, $type );
+					// echo( $call . '<br />' );
 					if(class_exists($call)) :
 						$$type	= new $call;
 						$$type->register_type();

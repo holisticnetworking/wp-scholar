@@ -30,12 +30,12 @@ class ScholarFeed {
 		));
 	}
 	
-	public function add_meta_boxes() {
+	public static function add_meta_boxes() {
 		add_meta_box( 'feed-details', 'Feed Details', 'ScholarFeed::details', 'feed', 'main', 'high' );
 	}
 	
 	
-	public function details( $post ) {
+	public static function details( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_feed_details_nonce' );
 		$feed		= get_post_meta( $post->ID, 'scholar_feed_details', true );
@@ -47,7 +47,7 @@ class ScholarFeed {
 		echo '<p><label for="scholar_feed_details_description">Feed Description:</label></p>';
 			echo '<p><textarea id="scholar_feed_details_description" name="scholar_feed_details[description]">'.esc_attr($feed['description']).'</textarea></p>';
 	}
-	public function save_details( $post_id ) {
+	public static function save_details( $post_id ) {
 		// Refuse without valid nonce:
 		if ( ! isset( $_POST['scholar_feed_details_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_feed_details_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		
