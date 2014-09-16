@@ -174,6 +174,32 @@ class WPScholar {
 		}
 	}
 	
+	
+	/*
+	 * Change the login background and WordPress logo
+	 */
+	public function login_logo() {
+		
+		echo '<style type="text/css">
+			html { 
+				background: url(' . plugins_url( 'images/scholar-background.png', __FILE__ ) . ') no-repeat center center fixed; 
+				-webkit-background-size: cover;
+				-moz-background-size: cover;
+				-o-background-size: cover;
+				background-size: cover;
+			}
+			body.login {
+				background: transparent !important;
+			}
+			.login h1 a {
+				background-image:url(' . plugins_url( 'images/scholar-logo.png', __FILE__ ) . ') !important;
+			}
+		</style>';
+	}
+	public function login_url() {
+		return 'http://holisticnetworking.net/wp-scholar';
+	}
+	
 	/* Giddyup */
 	public function WPScholar() {
 		add_action( 'init', 'WPScholar::register_content_types' );
@@ -184,6 +210,10 @@ class WPScholar {
 		// Flush rewrite rules:
 		register_activation_hook( __FILE__, 'WPScholar::flush_rewrite' );
 		register_deactivation_hook( __FILE__, 'WPScholar::flush_rewrite' );
+		
+		// Themed login:
+		add_action('login_head', 'WPScholar::login_logo');
+		add_action('login_headerurl', 'WPScholar::login_url');
 	}
 }
 
