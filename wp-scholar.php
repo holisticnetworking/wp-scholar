@@ -178,11 +178,11 @@ class WPScholar {
 	/*
 	 * Change the login background and WordPress logo
 	 */
-	public function login_logo() {
+	public static function login_logo() {
 		
 		echo '<style type="text/css">
 			html { 
-				background: url(' . plugins_url( 'images/scholar-background.png', __FILE__ ) . ') no-repeat center center fixed; 
+				background: url(' . plugins_url( 'images/scholar-login-background.png', __FILE__ ) . ') no-repeat center center fixed; 
 				-webkit-background-size: cover;
 				-moz-background-size: cover;
 				-o-background-size: cover;
@@ -192,12 +192,15 @@ class WPScholar {
 				background: transparent !important;
 			}
 			.login h1 a {
-				background-image:url(' . plugins_url( 'images/scholar-logo.png', __FILE__ ) . ') !important;
+				background-image:url(' . plugins_url( 'images/wp-scholar-logo-transparent.png', __FILE__ ) . ') !important;
+				background-size: 320px;
+				height: 100px;
+				width: 320px;
 			}
 		</style>';
 	}
-	public function login_url() {
-		return 'http://holisticnetworking.net/wp-scholar';
+	public static function login_url() {
+		return '//holisticnetworking.net/plugin-wp-scholar';
 	}
 	
 	/* Giddyup */
