@@ -17,7 +17,7 @@ class ScholarPerson {
 				'all_items' 			=> 'All People',
 				'view_item' 			=> 'View Person',
 				'search_items' 			=> 'Search People',
-				'not_found' 			=>  'No people found',
+				'not_found' 			=> 'No people found',
 				'not_found_in_trash' 	=> 'No people found in Trash', 
 				'parent_item_colon' 	=> '',
 				'menu_name' 			=> 'People'
@@ -30,12 +30,12 @@ class ScholarPerson {
 	}
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'name', 'Name', 'ScholarPerson::name', 'people', 'normal', 'high' );
-		add_meta_box( 'title', 'Titles', 'ScholarPerson::title', 'people', 'normal', 'high' );
-		add_meta_box( 'education', 'Education', 'ScholarPerson::education', 'people', 'normal', 'high' );
-		add_meta_box( 'address', 'Address', 'ScholarPerson::address', 'people', 'normal', 'high' );
-		add_meta_box( 'web', 'Web Addresses', 'ScholarPerson::web', 'people', 'normal', 'high' );
-		add_meta_box( 'bio', 'Biography', 'ScholarPerson::bio', 'people', 'normal', 'high' );
+		add_meta_box( 'name', 'Name', 'ScholarPerson::name', 'person', 'normal', 'high' );
+		add_meta_box( 'title', 'Titles', 'ScholarPerson::title', 'person', 'normal', 'high' );
+		add_meta_box( 'education', 'Education', 'ScholarPerson::education', 'person', 'normal', 'high' );
+		add_meta_box( 'address', 'Address', 'ScholarPerson::address', 'person', 'normal', 'high' );
+		add_meta_box( 'web', 'Web Addresses', 'ScholarPerson::web', 'person', 'normal', 'high' );
+		add_meta_box( 'bio', 'Biography', 'ScholarPerson::bio', 'person', 'normal', 'high' );
 	}
 	
 	
@@ -57,7 +57,7 @@ class ScholarPerson {
 		echo '<label for="scholar_name_middle">Middle:</label>';
 			echo '<input type="text" id="scholar_name_middle" name="scholar_name_middle" value="'.esc_attr($middle).'" size="15" maxlength="100" />';
 		echo '<label for="scholar_name_last">Last:</label>';
-			echo '<input type="text" id="scholar_name_last" name="scholar_name_last" value="'.esc_attr($last).'" size="15" maxlength="100" />';
+			echo '<input type="text" id="scholar_name_last" name="scholar_name_last" value="'.esc_attr($last).'" size="15" maxlength="100" /></p>';
 		echo '<label for="scholar_name_gender">Gender:</label>';
 			echo '<input type="text" id="scholar_name_gender" name="scholar_name_gender" value="'.esc_attr($gender).'" size="2" maxlength="100" />';
 		echo '<label for="scholar_name_suffix">Suffix:</label>';
@@ -284,7 +284,7 @@ class ScholarPerson {
 	*/
 	public static function replace_title($title, $id) {
 		global $id, $post;
-		if ( $id && $post && $post->post_type == 'people' ) :
+		if ( $id && $post && $post->post_type == 'person' ) :
 			$name['prefix']		= get_post_meta( $post->ID, 'scholar_prefix', true );
 			$name['first']		= get_post_meta( $post->ID, 'scholar_first_name', true );
 			$name['middle']		= get_post_meta( $post->ID, 'scholar_middle_name', true );
@@ -304,7 +304,7 @@ class ScholarPerson {
 	public static function replace_content($content) {
 		global $post;
 		$type	= get_post_type( $post );
-		if($type == 'people') :
+		if($type == 'person') :
 			$content	= get_post_meta( $post->ID, 'scholar_bio', true );
 		endif;
 		return $content;
