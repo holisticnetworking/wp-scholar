@@ -24,7 +24,7 @@ class ScholarPublication {
 				),
 			'description'	=> 	'Bibliographical information',
 			'public'		=> true,
-			'supports'		=> array('editor', 'thumbnail'),
+			'supports'		=> array('thumbnail'),
 			'taxonomies'	=> array(),
 			'has_archive'	=> true
 		));
