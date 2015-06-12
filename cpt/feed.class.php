@@ -26,6 +26,10 @@ class ScholarFeed {
 			'public'				=> true,
 			'supports'				=> array('thumbnail'),
 			'taxonomies'			=> array(),
+			'rewrite'				=> array(
+				'slug'			=> 'scholar_feed',
+				'with_front'	=> false
+			),
 			'register_meta_box_cb'	=> 'ScholarFeed::add_meta_boxes'
 		));
 	}
@@ -38,24 +42,18 @@ class ScholarFeed {
 	public static function details( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_feed_details_nonce' );
-		$feeds		= get_post_meta( $post->ID, 'scholar_feed_details', true );
+		$feed			= get_post_meta( $post->ID, 'scholar_feed_details', true );
+		$url			= !empty($feed['url']) ? esc_attr($feed['url']) : '';
+		$title			= !empty($feed['title']) ? esc_attr($feed['title']) : '';
+		$description	= !empty($feed['description']) ? esc_attr($feed['description']) : '';
 		
-		if( !empty( $feeds ) ) : foreach( $feeds as $feed ) : 
-			echo '<p><label for="scholar_feed_details_url">Feed URL:</label></p>';
-				echo '<p><input type="text" id="scholar_feed_details_url" name="scholar_feed_details[][url]" value="'.esc_attr($feed['url']).'" size="10" maxlength="20" /></p>';
-			echo '<p><label for="scholar_feed_details_title">Feed Title (overrides what is provided by the feed itself):</label></p>';
-				echo '<p><input type="text" id="scholar_feed_details_title" name="scholar_feed_details[][title]" value="'.esc_attr($feed['title']).'" size="10" maxlength="200" /></p>';
-			echo '<p><label for="scholar_feed_details_description">Feed Description:</label></p>';
-				echo '<p><textarea id="scholar_feed_details_description" name="scholar_feed_details[][description]">'.esc_attr($feed['description']).'</textarea></p>';
-		endforeach;
-		else :
-			echo '<p><label for="scholar_feed_details_url">Feed URL:</label></p>';
-				echo '<p><input type="text" id="scholar_feed_details_url" name="scholar_feed_details[][url]" value="" size="10" maxlength="20" /></p>';
-			echo '<p><label for="scholar_feed_details_title">Feed Title (overrides what is provided by the feed itself):</label></p>';
-				echo '<p><input type="text" id="scholar_feed_details_title" name="scholar_feed_details[][title]" value="" size="10" maxlength="200" /></p>';
-			echo '<p><label for="scholar_feed_details_description">Feed Description:</label></p>';
-				echo '<p><textarea id="scholar_feed_details_description" name="scholar_feed_details[][description]"></textarea></p>';
-		endif;
+		echo '<p><label for="scholar_feed_details_url">Feed URL:</label></p>';
+			echo '<p><input type="text" id="scholar_feed_details_url" name="scholar_feed_details[url]" value="' . $url . '" style="width: 100%" maxlength="200" /></p>';
+		echo '<p><label for="scholar_feed_details_title">Feed Title (overrides what is provided by the feed itself):</label></p>';
+			echo '<p><input type="text" id="scholar_feed_details_title" name="scholar_feed_details[title]" value="' . $title . '"  style="width: 100%" maxlength="200" /></p>';
+		echo '<p><label for="scholar_feed_details_description">Feed Description:</label></p>';
+			echo '<p><textarea id="scholar_feed_details_description" name="scholar_feed_details[description]" style="width: 100%; height: 200px;" >' . $description . '</textarea></p>';
+		
 	}
 	public static function save_details( $post_id ) {
 		// Refuse without valid nonce:
@@ -64,7 +62,7 @@ class ScholarFeed {
 		//sanitize user input
 		$feed	= array();
 		foreach( $_POST['scholar_feed_details'] as $key=>$value ) :
-			$feed[$key]	= anitize_text_field( $value );
+			$feed[$key]	= sanitize_text_field( $value );
 		endforeach;
 		if(!empty($feed)) :
 			// Save the data:
@@ -72,8 +70,45 @@ class ScholarFeed {
 		endif;
 	}
 	
+	public function the_title( $title, $id ) {
+		global $id, $post;
+		if ( $id && $post && $post->post_type == 'feed' ) :
+			$feed	= get_post_meta( $id, 'scholar_feed_details' );
+			$title	= !empty($feed['title']) ? esc_attr($feed['title']) : '';
+		endif;
+		return $title;
+	}
+	
+	function wp_title( $title, $sep ) {
+		global $paged, $page, $post;
+		
+		$type	= get_post_type( $post );
+		if( $type == 'feed' ) :
+			$feed	= get_post_meta( $id, 'scholar_feed_details' );
+			$title	= !empty($feed['title']) ? esc_attr($feed['title']) : '';
+			if ( is_feed() ) :
+				return $title;
+			endif;
+
+			// Add the site name.
+			$title .= get_bloginfo( 'name' );
+
+			// Add the site description for the home/front page.
+			$site_description = get_bloginfo( 'description', 'display' );
+			if ( $site_description && ( is_home() || is_front_page() ) )
+				$title = "$title $sep $site_description";
+
+			// Add a page number if necessary.
+			if ( $paged >= 2 || $page >= 2 )
+				$title = "$title $sep " . sprintf( __( 'Page %s', 'twentytwelve' ), max( $paged, $page ) );
+		endif;
+		return $title;
+	}
+	
 	public function ScholarFeed() {
 		add_action( 'save_post', 'ScholarFeed::save_details' );
+		add_action( 'the_title', 'ScholarFeed::the_title' );
+		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
 	}
 }
 ?>

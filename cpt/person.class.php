@@ -18,14 +18,20 @@ class ScholarPerson {
 				'view_item' 			=> 'View Person',
 				'search_items' 			=> 'Search People',
 				'not_found' 			=> 'No people found',
-				'not_found_in_trash' 	=> 'No people found in Trash', 
+				'not_found_in_trash' 	=> 'Nothing in Trash', 
 				'parent_item_colon' 	=> '',
 				'menu_name' 			=> 'People'
 				),
 			'description'			=> 'Display information about current grad students or interns with which you are working.',
 			'public'				=> true,
 			'supports'				=> array('thumbnail'),
-			'register_meta_box_cb'	=> 'ScholarPerson::add_meta_boxes'
+			'register_meta_box_cb'	=> 'ScholarPerson::add_meta_boxes',
+			'has_archive'			=> 'people',
+			'rewrite'				=> array(
+				'with_front'	=> false,
+				'slug'			=> 'person'
+			),
+			'can_export'			=> true
 		));
 	}
 	
@@ -36,6 +42,9 @@ class ScholarPerson {
 		add_meta_box( 'address', 'Address', 'ScholarPerson::address', 'person', 'normal', 'high' );
 		add_meta_box( 'web', 'Web Addresses', 'ScholarPerson::web', 'person', 'normal', 'high' );
 		add_meta_box( 'bio', 'Biography', 'ScholarPerson::bio', 'person', 'normal', 'high' );
+		// Rename the "Featured Image"
+		remove_meta_box('postimagediv', 'person', 'side');
+		add_meta_box('postimagediv', __('Profile Picture'), 'post_thumbnail_meta_box', 'person', 'side', 'high');
 	}
 	
 	
@@ -82,6 +91,21 @@ class ScholarPerson {
 		add_post_meta($post_id, 'scholar_middle_name', $middle, true) or update_post_meta( $post_id, 'scholar_middle_name', $middle);
 		add_post_meta($post_id, 'scholar_gender', $gender, true) or update_post_meta( $post_id, 'scholar_gender', $gender);
 		add_post_meta($post_id, 'scholar_suffix', $suffix, true) or update_post_meta( $post_id, 'scholar_suffix', $suffix);
+		
+		// Update the post slug:
+		// unhook this function to prevent infinite looping
+        remove_action( 'save_post', 'ScholarPerson::save_name' );
+		$post_name			= implode(' ', compact( 'prefix', 'first', 'middle', 'last' ));
+		if(!empty($suffix)) :
+			$post_name		.= ', ' . $suffix;
+		endif;
+        // update the post slug
+        wp_update_post( array(
+            'ID' => $post_id,
+            'post_name' => sanitize_title( $post_name ) // do your thing here
+        ));
+        // re-hook this function
+        add_action( 'save_post', 'ScholarPerson::save_name' );
 	}
 	
 	
@@ -309,7 +333,53 @@ class ScholarPerson {
 		endif;
 		return $content;
 	}
+
+	function wp_title( $title, $sep ) {
+		global $paged, $page, $post;
+		
+		$type	= get_post_type( $post );
+		if( $type == 'person' ) :
+			// Replace WP title:
+			$name['prefix']		= get_post_meta( $post->ID, 'scholar_prefix', true );
+			$name['first']		= get_post_meta( $post->ID, 'scholar_first_name', true );
+			$name['middle']		= get_post_meta( $post->ID, 'scholar_middle_name', true );
+			$name['last']		= get_post_meta( $post->ID, 'scholar_last_name', true );
+			$suffix				= get_post_meta( $post->ID, 'scholar_suffix', true );
+			$title				= implode(' ', $name);
+			if(!empty($suffix)) :
+				$title			.= ', ' . $suffix;
+			endif;
+			if ( is_feed() ) :
+				return $title;
+			endif;
+
+			// Add the site name.
+			$title .= get_bloginfo( 'name' );
+
+			// Add the site description for the home/front page.
+			$site_description = get_bloginfo( 'description', 'display' );
+			if ( $site_description && ( is_home() || is_front_page() ) )
+				$title = "$title $sep $site_description";
+
+			// Add a page number if necessary.
+			if ( $paged >= 2 || $page >= 2 )
+				$title = "$title $sep " . sprintf( __( 'Page %s', 'twentytwelve' ), max( $paged, $page ) );
+		endif;
+		return $title;
+	}
 	
+	
+	public function widgets() {
+		register_sidebar( array(
+			'name' => __( 'Persons Pages', 'reactive' ),
+			'id' => 'person',
+			'description' => __( 'For archives and / or single persons, based on your settings.', 'reactive' ),
+			'before_widget' => '<aside id="%1$s" class="person-widgets widget-container %2$s">',
+			'after_widget' => '</aside>',
+			'before_title' => '<h3 class="widget-title">',
+			'after_title' => '</h3>',
+		) );
+	}
 	
 	
 	
@@ -322,11 +392,12 @@ class ScholarPerson {
 		add_action( 'save_post', 'ScholarPerson::save_education' );
 		
 		// Replace WP the_content and the_title with Scholar text:
-		add_filter('the_title', 'ScholarPerson::replace_title', 10, 3);
-		add_filter('the_content', 'ScholarPerson::replace_content', 10, 3);
+		add_filter( 'the_title', 'ScholarPerson::replace_title', 10, 3 );
+		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
+		add_filter( 'the_content', 'ScholarPerson::replace_content', 10, 3 );
+		
+		// Custom Sidebar:
+		add_action( 'widgets_init', 'ScholarPerson::widgets' );
 	}
-	
-	
-	
 }
 ?>
