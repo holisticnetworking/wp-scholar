@@ -41,20 +41,6 @@ class ScholarFeed {
 	
 	public static function details( $post ) {
 		// Use nonce for verification
-<<<<<<< HEAD
-		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_feed_details_nonce' );
-		$feed			= get_post_meta( $post->ID, 'scholar_feed_details', true );
-		$url			= !empty($feed['url']) ? esc_attr($feed['url']) : '';
-		$title			= !empty($feed['title']) ? esc_attr($feed['title']) : '';
-		$description	= !empty($feed['description']) ? esc_attr($feed['description']) : '';
-		
-		echo '<p><label for="scholar_feed_details_url">Feed URL:</label></p>';
-			echo '<p><input type="text" id="scholar_feed_details_url" name="scholar_feed_details[url]" value="' . $url . '" style="width: 100%" maxlength="200" /></p>';
-		echo '<p><label for="scholar_feed_details_title">Feed Title (overrides what is provided by the feed itself):</label></p>';
-			echo '<p><input type="text" id="scholar_feed_details_title" name="scholar_feed_details[title]" value="' . $title . '"  style="width: 100%" maxlength="200" /></p>';
-		echo '<p><label for="scholar_feed_details_description">Feed Description:</label></p>';
-			echo '<p><textarea id="scholar_feed_details_description" name="scholar_feed_details[description]" style="width: 100%; height: 200px;" >' . $description . '</textarea></p>';
-=======
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_feeds_nonce' );
 		$feed			= get_post_meta( $post->ID, 'scholar_feeds', true );
 		$url			= isset( $feed['url'] ) ? esc_attr( $feed['url'] ) : '';
@@ -67,7 +53,6 @@ class ScholarFeed {
 			echo '<p><input type="text" id="scholar_feeds_title" name="scholar_feeds[title]" value="' . $title . '" size="80" maxlength="200" /></p>';
 		echo '<p><label for="scholar_feeds_description">Feed Description:</label></p>';
 			echo '<p><textarea id="scholar_feeds_description" name="scholar_feeds[description]" style="width: 100%; height: 200px;">' . $description . '</textarea></p>';
->>>>>>> 514207fb981266649ba07f8d97b6f396bf8d55bc
 		
 	}
 	public static function save_details( $post_id ) {
@@ -76,11 +61,7 @@ class ScholarFeed {
 		
 		//sanitize user input
 		$feed	= array();
-<<<<<<< HEAD
 		foreach( $_POST['scholar_feed_details'] as $key=>$value ) :
-=======
-		foreach( $_POST['scholar_feeds'] as $key=>$value ) :
->>>>>>> 514207fb981266649ba07f8d97b6f396bf8d55bc
 			$feed[$key]	= sanitize_text_field( $value );
 		endforeach;
 		if(!empty($feed)) :
@@ -139,12 +120,8 @@ class ScholarFeed {
 	
 	public function ScholarFeed() {
 		add_action( 'save_post', 'ScholarFeed::save_details' );
-<<<<<<< HEAD
 		add_action( 'the_title', 'ScholarFeed::the_title' );
 		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
-=======
-		add_filter( 'the_title', 'ScholarFeed::replace_title', 10, 3 );
->>>>>>> 514207fb981266649ba07f8d97b6f396bf8d55bc
 	}
 }
 ?>
