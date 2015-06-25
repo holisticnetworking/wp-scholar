@@ -32,7 +32,8 @@ class WPScholar {
 	
 	public static function admin_pages() {
 		$types	= get_option('wp_scholar');
-		add_submenu_page('index.php', 'Allowed Content Types', 'Content Types', 'activate_plugins', 'content_types', 'WPScholar::content_types');
+		add_menu_page( 'WP-Scholar Configuration Options', 'WP-Scholar', 'activate_plugins', 'wp-scholar', 'WPScholar::main_admin_page' );
+		add_submenu_page('wp-scholar', 'Allowed Content Types', 'Content Types', 'activate_plugins', 'content_types', 'WPScholar::content_types');
 		if( is_array( $types ) ) :
 			if(!in_array('post', $types)) :
 				remove_menu_page('edit.php');
@@ -41,6 +42,11 @@ class WPScholar {
 				remove_menu_page('edit.php?post_type=page');
 			endif;
 		endif;
+	}
+	
+	
+	public static function main_admin_page() {
+		echo '<h2>WP-Scholar: Rich academic websites, simply made</h2>';
 	}
 	
 	public static function admin_scripts() {
