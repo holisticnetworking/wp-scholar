@@ -17,7 +17,7 @@ class ScholarPublication {
 				'all_items' 			=> 'All Publications',
 				'view_item' 			=> 'View Publication',
 				'search_items' 			=> 'Search Publications',
- 				'not_found' 			=>  'No publications found',
+ 				'not_found' 			=> 'No publications found',
  				'not_found_in_trash' 	=> 'No publications found in Trash', 
 				'parent_item_colon' 	=> '',
 				'menu_name' 			=> 'Publications'
@@ -27,7 +27,11 @@ class ScholarPublication {
 			'supports'				=> array('thumbnail', 'title'),
 			'register_meta_box_cb'	=> 'ScholarPublication::add_meta_boxes',
 			'taxonomies'			=> array(),
-			'has_archive'			=> true
+			'has_archive'			=> 'publications',
+			'rewrite'				=> array(
+				'with_front'	=> false,
+				'slug'			=> 'publication'
+			)
 		));
 	}
 	
@@ -56,9 +60,11 @@ class ScholarPublication {
 	public static function citation( $post ) {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_citation_nonce' );
+		$format		= get_post_meta( $post->ID, 'scholar_format', true );
 		$author		= get_post_meta( $post->ID, 'scholar_author', true );
 		$article	= get_post_meta( $post->ID, 'scholar_article', true );
 		$title		= get_post_meta( $post->ID, 'scholar_title', true );
+		$doi		= get_post_meta( $post->ID, 'scholar_doi', true );
 		$translator	= get_post_meta( $post->ID, 'scholar_translator', true );
 		$edition	= get_post_meta( $post->ID, 'scholar_edition', true );
 		$editor		= get_post_meta( $post->ID, 'scholar_editor', true );
@@ -68,13 +74,37 @@ class ScholarPublication {
 		$medium		= get_post_meta( $post->ID, 'scholar_medium', true );
 		$url		= get_post_meta( $post->ID, 'scholar_url', true );
 		
+		$formats	= array(
+			'book'				=> 'Book',
+			'encyclopedia'		=> 'Encyclopaedic Entry',
+			'dissertation'		=> 'Dissertation',
+			'web'				=> 'Online Article, General',
+			'online_journal'	=> 'Online Journal (with DOI)'
+		);
+		
 		// Form inputs:
+		echo '<p><label style="display:block;" for="scholar_format">Format of Cited Work:</label>';
+			echo '<select type="text" id="scholar_format" name="scholar_format">';
+				echo '<option value="">[[Please Select]]</option>';
+				foreach( $formats as $key=>$value ) :
+					$selected	= ( $key == $format ) ? ' selected="selected"' : '';
+					$option		= sprintf(
+						'<option value="%s"%s>%s</option>',
+						$key,
+						$selected,
+						$value
+					);
+					echo $option;
+				endforeach;
+			echo '</select></p>';
 		echo '<p><label style="display:block;" for="scholar_author">Author(s) of work:</label>';
 			echo '<input style="width: 100%" type="text" id="scholar_author" name="scholar_author" value="' . $author . '" maxlength="200" /></p>';
 		echo '<p><label style="display:block;" for="scholar_article">Article Title:</label>';
 			echo '<input style="width: 100%" type="text" id="scholar_article" name="scholar_article" value="' . $article . '" maxlength="200" /></p>';
 		echo '<p><label style="display:block;" for="scholar_title">Title of Work:</label>';
 			echo '<input style="width: 100%" type="text" id="scholar_title" name="scholar_title" value="' . $title . '" maxlength="200" /></p>';
+		echo '<p><label style="display:block;" for="scholar_doi">DOI:</label>';
+			echo '<input style="width: 100%" type="text" id="scholar_doi" name="scholar_doi" value="' . $doi . '" maxlength="200" /></p>';
 		echo '<p><label style="display:block;" for="scholar_translator">Translator(s):</label>';
 			echo '<input style="width: 100%" type="text" id="scholar_translator" name="scholar_translator" value="' . $translator . '" maxlength="200" /></p>';
 		echo '<p><label style="display:block;" for="scholar_edition">Edition or Reissue Year:</label>';
@@ -99,9 +129,11 @@ class ScholarPublication {
 		if ( ! isset( $_POST['scholar_citation_nonce'] ) || ! wp_verify_nonce( $_POST['scholar_citation_nonce'], plugin_basename( __FILE__ ) ) ) return;
 		
 		//sanitize user input
+		$format		= sanitize_text_field( $_POST['scholar_format'] );
 		$author		= sanitize_text_field( $_POST['scholar_author'] );
 		$article	= sanitize_text_field( $_POST['scholar_article'] );
 		$title		= sanitize_text_field( $_POST['scholar_title'] );
+		$doi		= sanitize_text_field( $_POST['scholar_doi'] );
 		$translator	= sanitize_text_field( $_POST['scholar_translator'] );
 		$edition	= sanitize_text_field( $_POST['scholar_edition'] );
 		$editor		= sanitize_text_field( $_POST['scholar_editor'] );
@@ -111,9 +143,11 @@ class ScholarPublication {
 		$medium		= sanitize_text_field( $_POST['scholar_medium'] );
 		$url		= sanitize_text_field( $_POST['scholar_url'] );
 		
+		add_post_meta($post_id, 'scholar_format', $format, true) or update_post_meta( $post_id, 'scholar_format', $format);
 		add_post_meta($post_id, 'scholar_author', $author, true) or update_post_meta( $post_id, 'scholar_author', $author);
 		add_post_meta($post_id, 'scholar_article', $article, true) or update_post_meta( $post_id, 'scholar_article', $article);
 		add_post_meta($post_id, 'scholar_title', $title, true) or update_post_meta( $post_id, 'scholar_title', $title);
+		add_post_meta($post_id, 'scholar_doi', $doi, true) or update_post_meta( $post_id, 'scholar_doi', $doi);
 		add_post_meta($post_id, 'scholar_translator', $translator, true) or update_post_meta( $post_id, 'scholar_translator', $translator);
 		add_post_meta($post_id, 'scholar_edition', $edition, true) or update_post_meta( $post_id, 'scholar_edition', $edition);
 		add_post_meta($post_id, 'scholar_editor', $editor, true) or update_post_meta( $post_id, 'scholar_editor', $editor);

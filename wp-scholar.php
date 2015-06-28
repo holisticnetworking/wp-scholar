@@ -142,7 +142,8 @@ class WPScholar {
 		$regex		= WPScholar::get_post_types('regex');
 		$views		= array('single', 'archive');
 		// We are currently viewing a DFE custom post type:
-		if( $found	= array_search($type, $registered) ) :
+		$found	= array_search($type, $registered);
+		if( $found !== false ) :
 			foreach($views as $view) :
 				$theview	= 'is_' . $view;
 				// The current template does _not_ have an overriding template file, serve the default:
