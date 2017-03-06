@@ -30,6 +30,10 @@ class ScholarPublication {
 		));
 	}
 	
+	public static function add_meta_boxes() {
+		add_meta_box( 'citation', 'Citation Information', 'ScholarPublication::citation', 'publication', 'normal', 'high' );
+	}
+	
 	public static function register_taxonomy() {
 		// "Pair" taxonomy exists to allow two formulas to be associated with one another.
 		register_taxonomy(
@@ -46,6 +50,18 @@ class ScholarPublication {
 				'hierarchal'	=> true
 			)
 		);
+	}
+	
+	public static function citation( $post ) {
+		
+	}
+	
+	public static function save_citation( $post_id ) {
+		
+	}
+	
+	public function __construct() {
+		add_action( 'save_post', 'ScholarPublication::save_citation' );
 	}
 }
 ?>

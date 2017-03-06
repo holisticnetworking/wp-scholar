@@ -1,0 +1,5 @@
+Basic:
+Lastname, Firstname. Title of Book. City of Publication: Publisher, Year of Publication. Medium of Publication.
+
+Simplified:
+[AUTHORS].( "[ARTICLE]") [TITLE]. (Trans. [TRANSLATOR])( [EDITION])( [EDITOR]) [PUB CITY]: [PUBLISHER], [PUB YEAR]. [MEDIUM] (<[URL]>)
