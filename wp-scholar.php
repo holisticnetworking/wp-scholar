@@ -46,13 +46,13 @@ class WPScholar {
 	public static function admin_scripts() {
 		wp_register_style(
 			'scholar_admin_stylesheet',
-			plugin_dir_path( __FILE__ ) . 'css/admin.css',
+			plugins_url( 'css/admin.css', __FILE__ ),
 			'1.0'
 		);
-		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
-		wp_enqueue_style('scholar_admin_stylesheet');
-		wp_enqueue_script('jquery-ui-datepicker');
-		wp_enqueue_script('scholar_scripts', plugin_dir_path( __FILE__ ) . 'js/scripts.js', array('jquery','jquery-ui-autocomplete'), null, true);
+		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
+		wp_enqueue_style( 'scholar_admin_stylesheet' );
+		wp_enqueue_script( 'jquery-ui-datepicker' );
+		wp_enqueue_script( 'scholar_scripts', plugins_url( 'js/scripts.js', __FILE__ ), array('jquery','jquery-ui-autocomplete'), null, true );
 	}
 	
 	public static function content_types() {

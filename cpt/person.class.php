@@ -50,18 +50,47 @@ class ScholarPerson {
 		$gender		= get_post_meta( $post->ID, 'scholar_gender', true );
 		$suffix		= get_post_meta( $post->ID, 'scholar_suffix', true );
 		
-		echo '<p><label for="scholar_name_suffix">Prefix:</label>';
-			echo '<input type="text" id="scholar_name_prefix" name="scholar_name_prefix" value="'.esc_attr($prefix).'" size="5" maxlength="20" />';
-		echo '<label for="scholar_name_first">First:</label>';
-			echo '<input type="text" id="scholar_name_first" name="scholar_name_first" value="'.esc_attr($first).'" size="15" maxlength="100" />';
-		echo '<label for="scholar_name_middle">Middle:</label>';
-			echo '<input type="text" id="scholar_name_middle" name="scholar_name_middle" value="'.esc_attr($middle).'" size="15" maxlength="100" />';
-		echo '<label for="scholar_name_last">Last:</label>';
-			echo '<input type="text" id="scholar_name_last" name="scholar_name_last" value="'.esc_attr($last).'" size="15" maxlength="100" /></p>';
-		echo '<label for="scholar_name_gender">Gender:</label>';
-			echo '<input type="text" id="scholar_name_gender" name="scholar_name_gender" value="'.esc_attr($gender).'" size="2" maxlength="100" />';
-		echo '<label for="scholar_name_suffix">Suffix:</label>';
-			echo '<input type="text" id="scholar_name_suffix" name="scholar_name_suffix" value="'.esc_attr($suffix).'" size="5" maxlength="20" />';
+		echo sprintf(
+			'<div class="scholar_row">
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%1$s:</label>
+					<input type="text" id="scholar_name_prefix" name="scholar_name_prefix" value="%2$s" size="5" maxlength="20" />
+				</div>
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%3$s:</label>
+					<input type="text" id="scholar_name_first" name="scholar_name_first" value="%4$s" size="5" maxlength="20" />
+				</div>
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%5$s:</label>
+					<input type="text" id="scholar_name_middle" name="scholar_name_middle" value="%6$s" size="5" maxlength="20" />
+				</div>
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%7$s:</label>
+					<input type="text" id="scholar_name_last" name="scholar_name_last" value="%8$s" size="5" maxlength="20" />
+				</div>
+			<div class="scholar_row">
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%9$s:</label>
+					<input type="text" id="scholar_name_gender" name="scholar_name_gender" value="%10$s" size="5" maxlength="20" />
+				</div>
+				<div class="scholar_column large-3">
+					<label for="scholar_name_suffix">%11$s:</label>
+					<input type="text" id="scholar_name_suffix" name="scholar_name_suffix" value="%12$s" size="5" maxlength="20" />
+				</div>
+			</div>',
+			__( 'Prefix' ),
+			esc_attr( $prefix ),
+			__( 'First' ),
+			esc_attr( $first ),
+			__( 'Middle' ),
+			esc_attr( $middle ),
+			__( 'Last' ),
+			esc_attr( $last ),
+			__( 'Gender' ),
+			esc_attr( $gender ),
+			__( 'Suffix' ),
+			esc_attr( $suffix )
+		);
 	}
 	public static function save_name( $post_id ) {
 		// Refuse without valid nonce:
@@ -92,6 +121,32 @@ class ScholarPerson {
 		$titles		= get_post_meta( $post->ID, 'scholar_title', true);
 		$titles		= !empty($titles) ? $titles : array();
 		
+		foreach($titles as $title) :
+			echo sprintf(
+				'<div class="scholar_row">
+					<div class="scholar_column large-3">
+						<label>%s:</label>
+					</div>
+					<div class="scholar_column large-9">
+						<input type="text" id="scholar_title" name="scholar_title[]" value="%s" size="40" maxlength="100" />
+					</div>
+				</div>',
+				__( 'Title' ),
+				esc_attr( $title )
+			);
+		endforeach;
+		echo sprintf(
+			'<div class="scholar_row">
+				<div class="scholar_column large-3">
+					<label>%s:</label>
+				</div>
+				<div class="scholar_column large-9">
+					<input type="text" id="scholar_title" name="scholar_title[]" value="" size="40" maxlength="100" />
+				</div>
+			</div>',
+			__( 'Title' )
+		); 
+		/* 
 		echo '<fieldset class="titles">';
 		foreach($titles as $title) :
 			echo '<p><label for="scholar_title">Title:</label>';
@@ -100,6 +155,7 @@ class ScholarPerson {
 		echo '<p><label for="scholar_name_gender">New Title:</label>';
 			echo '<input type="text" id="scholar_title" name="scholar_title[]" value="" size="40" maxlength="100" /></p>';
 		echo '</fieldset>';
+		*/
 		echo '<input type="button" id="new-title" value="Add Title">';
 	}
 	public static function save_title( $post_id ) {

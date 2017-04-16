@@ -1,1 +1,27 @@
 /* CSS for WP-Scholar Admin Areas */
+.scholar_row {
+	display: block;
+	clear: both;
+}
+
+.scholar_column {
+	display: inline-block;
+}
+
+.large-3 {
+	width: 24.5%;
+}
+
+.large-9 {
+	width: 74%;
+}
+
+.scholar_row label {
+	display: block;
+	padding: 5px;
+	background: #eee;
+}
+
+.scholar_row input[type=text] {
+	width: 100%;
+}
