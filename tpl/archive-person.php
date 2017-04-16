@@ -1,0 +1,54 @@
+<?php
+/**
+ * The Template for displaying all single persons.
+ *
+ * @package WordPress
+ * @subpackage Twenty_Ten
+ * @since Twenty Ten 1.0
+ */
+
+get_header(); ?>
+	<!-- Begin Content -->
+	<div id="content" class="row">
+		<div id="posts" class="large-9 columns" data-role="content" role="content">
+			<?php while ( have_posts() ) : the_post(); 
+				$display	= get_post_meta( $post->ID, 'scholar_person_display', true );
+				if( $display['index'] > 0 ) :
+			?>
+				<hr />
+				<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+					<div class="row">
+						<div class="columns large-3 small-3">
+							<?php the_post_thumbnail(); ?>
+						</div>
+						<div class="columns large-9 small-9">
+						<?php if( $display['single_page'] > 0 ) : ?>
+							<h3 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf( esc_attr__( 'Permalink to %s', 'glc' ), the_title_attribute( 'echo=0' ) ); ?>" rel="bookmark"><?php the_title(); ?></a></h3><div class="academic">
+						<?php else : ?>
+							<h3 class="entry-title"><?php the_title(); ?></h3><div class="academic">
+						<?php endif; ?>
+							<?php
+								$titles	= get_post_meta( get_the_ID(), 'scholar_title', true );
+								if( !empty( $titles ) ) :
+									echo '<h5>' . $titles[0] . '<h5>';
+								endif;
+								if( $display['contact'] > 0 ) :
+									$contact	= get_post_meta( get_the_ID(), 'scholar_address', true );
+									if( !empty( $contact['email'] ) ) :
+										echo '<p><em><a href="mailto:' . $contact['email'] . '">' . $contact['email'] . '</a></em></p>';
+									endif;
+								endif;
+							?>
+							<?php // the_excerpt( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'glc' ) ); ?>
+							<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'glc' ), 'after' => '</div>' ) ); ?>
+						</div>
+					</div>
+				</article><!-- #post-## -->
+			<?php 
+				endif;
+				endwhile; // End the loop. Whew. ?>
+		</div>
+		
+		<?php get_sidebar( 'person' ); ?>
+	</div><!-- #content -->
+<?php get_footer(); ?>

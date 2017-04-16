@@ -1,6 +1,6 @@
 <?php
 /**
- * The Template for displaying all single posts.
+ * The Template for displaying an archive list of publications
  *
  * @package WordPress
  * @subpackage Twenty_Ten
@@ -8,7 +8,6 @@
  */
 global $reactive;
 get_header(); ?>
-<?php get_template_part( 'loop', 'hero' ); ?>
 	<!-- Begin Content -->
 	<div id="content" class="row">
 		<div id="posts" class="large-9 columns" data-role="content" role="content">

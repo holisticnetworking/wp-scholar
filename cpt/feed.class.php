@@ -26,6 +26,10 @@ class ScholarFeed {
 			'public'				=> true,
 			'supports'				=> array('thumbnail'),
 			'taxonomies'			=> array(),
+			'rewrite'				=> array(
+				'slug'			=> 'scholar_feed',
+				'with_front'	=> false
+			),
 			'register_meta_box_cb'	=> 'ScholarFeed::add_meta_boxes'
 		));
 	}
@@ -57,7 +61,7 @@ class ScholarFeed {
 		
 		//sanitize user input
 		$feed	= array();
-		foreach( $_POST['scholar_feeds'] as $key=>$value ) :
+		foreach( $_POST['scholar_feed_details'] as $key=>$value ) :
 			$feed[$key]	= sanitize_text_field( $value );
 		endforeach;
 		if(!empty($feed)) :
@@ -79,9 +83,45 @@ class ScholarFeed {
 		return $title;
 	}
 	
+	public function the_title( $title, $id ) {
+		global $id, $post;
+		if ( $id && $post && $post->post_type == 'feed' ) :
+			$feed	= get_post_meta( $id, 'scholar_feed_details' );
+			$title	= !empty($feed['title']) ? esc_attr($feed['title']) : '';
+		endif;
+		return $title;
+	}
+	
+	function wp_title( $title, $sep ) {
+		global $paged, $page, $post;
+		
+		$type	= get_post_type( $post );
+		if( $type == 'feed' ) :
+			$feed	= get_post_meta( $id, 'scholar_feed_details' );
+			$title	= !empty($feed['title']) ? esc_attr($feed['title']) : '';
+			if ( is_feed() ) :
+				return $title;
+			endif;
+
+			// Add the site name.
+			$title .= get_bloginfo( 'name' );
+
+			// Add the site description for the home/front page.
+			$site_description = get_bloginfo( 'description', 'display' );
+			if ( $site_description && ( is_home() || is_front_page() ) )
+				$title = "$title $sep $site_description";
+
+			// Add a page number if necessary.
+			if ( $paged >= 2 || $page >= 2 )
+				$title = "$title $sep " . sprintf( __( 'Page %s', 'twentytwelve' ), max( $paged, $page ) );
+		endif;
+		return $title;
+	}
+	
 	public function ScholarFeed() {
 		add_action( 'save_post', 'ScholarFeed::save_details' );
-		add_filter( 'the_title', 'ScholarFeed::replace_title', 10, 3 );
+		add_action( 'the_title', 'ScholarFeed::the_title' );
+		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
 	}
 }
 ?>
