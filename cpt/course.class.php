@@ -1,9 +1,12 @@
 <?php
-/*
-// News Feeds:	Manage RSS and Atom feeds here.
-*/
+/**
+ * Course
+ * 
+ * Display an course offered by the academic.
+ */
+namespace WPScholar;
 
-class ScholarCourse {
+class Course {
 	
 	public function register_type() {
 		register_post_type('course', array(
@@ -95,7 +98,7 @@ class ScholarCourse {
 		);
 	}
 	
-	public function ScholarCourse() {
+	public function __construct() {
 		add_action( 'save_post', 'ScholarCourse::save_description' );
 		add_action( 'save_post', 'ScholarCourse::save_schedule' );
 	}

@@ -1,6 +1,13 @@
 <?php
 /**
- * @package WP Scholar
+ * WP Scholar
+ * 
+ * Effective Websites for Academia
+ *
+ * @link http://holisticnetworking.net/
+ * @version 0.1b
+ * @author Thomas J Belknap <tbelknap@holisticnetworking.net>
+ * @license All rights reserved.
  */
 /*
 Plugin Name: WP Scholar
@@ -9,31 +16,37 @@ Description: Provides custom post types for supporting websites for academia
 Version: 0.1b
 Author: Thomas J Belknap
 Author URI: http://holisticnetworking.net
-License: GPLv2 or later
+License: All rights reserved.
 */
 
-/*
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
+namespace WPScholar;
+use WPScholar\Award;
+use WPScholar\Course;
+use WPScholar\Feed;
+use WPScholar\Gallery;
+use WPScholar\GradStudy;
+use WPScholar\News;
+use WPScholar\Person;
+use WPScholar\Publication;
+use WPScholar\Research;
 
 class WPScholar {
 	
 	public static function admin_pages() {
 		$types	= get_option('wp_scholar');
-		add_menu_page( 'WP-Scholar Configuration Options', 'WP-Scholar', 'activate_plugins', 'wp-scholar', 'WPScholar::main_admin_page' );
-		add_submenu_page('wp-scholar', 'Allowed Content Types', 'Content Types', 'activate_plugins', 'content_types', 'WPScholar::content_types');
+		add_menu_page( 'WP-Scholar Configuration Options', 
+		    'WP-Scholar', 
+		    'activate_plugins', 
+		    'wp-scholar', 
+		    '\WPScholar\WPScholar::main_admin_page'
+		);
+		add_submenu_page('wp-scholar', 
+		    'Allowed Content Types',
+		    'Content Types', 
+		    'activate_plugins', 
+		    'content_types', 
+		    '\WPScholar\WPScholar::content_types'
+		);
 		if( is_array( $types ) ) :
 			if(!in_array('post', $types)) :
 				remove_menu_page('edit.php');
@@ -83,7 +96,7 @@ class WPScholar {
 					<li><input type="checkbox" class="type-select" name="types[]" value="publication" id="publication" <?php if(in_array('publication', $types)) : echo 'checked="checked"'; endif; ?>><label for="publication">Publications</label></li>
 					<li><input type="checkbox" class="type-select" name="types[]" value="research" id="research" <?php if(in_array('research', $types)) : echo 'checked="checked"'; endif; ?>><label for="research">Research</label></li>
 					<li><input type="checkbox" class="type-select" name="types[]" value="course" id="course" <?php if(in_array('course', $types)) : echo 'checked="checked"'; endif; ?>><label for="course">Courses</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="grad_study" id="grad_study" <?php if(in_array('grad_study', $types)) : echo 'checked="checked"'; endif; ?>><label for="grad_study">Grad Studies</label></li>
+					<li><input type="checkbox" class="type-select" name="types[]" value="grad_study" id="grad_study" <?php if(in_array('grad_study', $types)) : echo 'checked="checked"'; endif; ?>><label for="gradstudy">Grad Studies</label></li>
 					<li><input type="checkbox" class="type-select" name="types[]" value="person" id="person" <?php if(in_array('person', $types)) : echo 'checked="checked"'; endif; ?>><label for="person">People</label></li>
 					<li><input type="checkbox" class="type-select" name="types[]" value="award" id="award" <?php if(in_array('award', $types)) : echo 'checked="checked"'; endif; ?>><label for="award">Awards and Honors</label></li>
 					<li><input type="checkbox" class="type-select" name="types[]" value="feed" id="feed" <?php if(in_array('feed', $types)) : echo 'checked="checked"'; endif; ?>><label for="feed">RSS Feeds</label></li>
@@ -106,7 +119,11 @@ class WPScholar {
 				if($type != 'post' && $type != 'page') :
 					include( plugin_dir_path(__FILE__) . 'cpt/' . $type . '.class.php' );
 					// w00t! This means: convert from under_scores to CamelCase:
-					$call	= 'Scholar' . preg_replace_callback( '/(?:^|_)(.?)/', function( $i ) { return strtoupper( $i[0] ); }, $type );
+					$call	= 'WPScholar\\' . preg_replace_callback( 
+					    '/(?:^|_)(.?)/', 
+					    function( $i ) { return strtoupper( $i[0] ); }, 
+					    $type 
+					);
 					// echo( $call . '<br />' );
 					if(class_exists($call)) :
 						$$type	= new $call;
@@ -115,10 +132,10 @@ class WPScholar {
 				endif;
 			endforeach; 
 			if(!in_array('post', $types)) :
-				WPScholar::unregister_type('post');
+				\WPScholar\WPScholar::unregister_type('post');
 			endif;
 			if(!in_array('page', $types)) :
-				WPScholar::unregister_type('page');
+				\WPScholar\WPScholar::unregister_type('page');
 			endif;
 		endif;
 	}
@@ -138,8 +155,8 @@ class WPScholar {
 	*/
 	public static function template( $template ) {
 		$type		= get_post_type();
-		$registered	= WPScholar::get_post_types();
-		$regex		= WPScholar::get_post_types('regex');
+		$registered	= \WPScholar\WPScholar::get_post_types();
+		$regex		= \WPScholar\WPScholar::get_post_types('regex');
 		$views		= array('single', 'archive');
 		// We are currently viewing a DFE custom post type:
 		$found	= array_search($type, $registered);
@@ -211,21 +228,21 @@ class WPScholar {
 	}
 	
 	/* Giddyup */
-	public function WPScholar() {
-		add_action( 'init', 'WPScholar::register_content_types' );
-		add_action( 'admin_menu', 'WPScholar::admin_pages' );
-		add_action( 'admin_enqueue_scripts', 'WPScholar::admin_scripts' );
-		add_filter( 'template_include', 'WPScholar::template' );
+	public function __construct() {
+		add_action( 'init', '\WPScholar\WPScholar::register_content_types' );
+		add_action( 'admin_menu', '\WPScholar\WPScholar::admin_pages' );
+		add_action( 'admin_enqueue_scripts', '\WPScholar\WPScholar::admin_scripts' );
+		add_filter( 'template_include', '\WPScholar\WPScholar::template' );
 		
 		// Flush rewrite rules:
-		register_activation_hook( __FILE__, 'WPScholar::flush_rewrite' );
-		register_deactivation_hook( __FILE__, 'WPScholar::flush_rewrite' );
+		register_activation_hook( __FILE__, '\WPScholar\WPScholar::flush_rewrite' );
+		register_deactivation_hook( __FILE__, '\WPScholar\WPScholar::flush_rewrite' );
 		
 		// Themed login:
-		add_action('login_head', 'WPScholar::login_logo');
-		add_action('login_headerurl', 'WPScholar::login_url');
+		add_action('login_head', '\WPScholar\WPScholar::login_logo');
+		add_action('login_headerurl', '\WPScholar\WPScholar::login_url');
 	}
 }
 
-$dfept	= new WPScholar;
+$wps	= new WPScholar;
 ?>

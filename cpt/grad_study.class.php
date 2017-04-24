@@ -1,9 +1,12 @@
 <?php
-/*
-// News Feeds:	Manage RSS and Atom feeds here.
-*/
+/**
+ * Grad Study
+ * 
+ * The types of grad studies offered by the academic.
+ */
+namespace WPScholar;
 
-class ScholarGradStudy {
+class GradStudy {
 	
 	public function register_type() {
 		register_post_type('grad_study', array(
@@ -27,6 +30,10 @@ class ScholarGradStudy {
 			'supports'		=> array('title', 'thumbnail'),
 			'taxonomies'	=> array('category', 'post_tag')
 		));
+	}
+	
+	public function __construct() {
+		add_action( 'save_post', 'ScholarAward::save_details' );
 	}
 }
 ?>

@@ -1,9 +1,12 @@
 <?php
-/*
-// News Feeds:	Manage RSS and Atom feeds here.
-*/
+/**
+ * Feed
+ * 
+ * RSS news feeds
+ */
+namespace WPScholar;
 
-class ScholarFeed {
+class Feed {
 	
 	public function register_type() {
 		register_post_type('feed', array(
@@ -118,7 +121,7 @@ class ScholarFeed {
 		return $title;
 	}
 	
-	public function ScholarFeed() {
+	public function __construct() {
 		add_action( 'save_post', 'ScholarFeed::save_details' );
 		add_action( 'the_title', 'ScholarFeed::the_title' );
 		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );

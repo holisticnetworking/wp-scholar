@@ -1,9 +1,10 @@
 <?php
-/*
-// People:		Display information about a specific person.
-*/
+/**
+ * Person
+ */
+namespace WPScholar;
 
-class ScholarPerson {
+class Person {
 	
 	public function register_type() {
 		register_post_type('person', array(
@@ -464,7 +465,7 @@ class ScholarPerson {
 		return $content;
 	}
 
-	function wp_title( $title, $sep ) {
+	static function wp_title( $title, $sep ) {
 		global $paged, $page, $post;
 		
 		$type	= get_post_type( $post );
@@ -529,7 +530,7 @@ class ScholarPerson {
 	
 	
 	
-	public function ScholarPerson() {
+	public function __construct() {
 		add_action( 'save_post', 'ScholarPerson::save_name' );
 		add_action( 'save_post', 'ScholarPerson::save_address' );
 		add_action( 'save_post', 'ScholarPerson::save_web' );
@@ -541,8 +542,8 @@ class ScholarPerson {
 		
 		// Replace WP the_content and the_title with Scholar text:
 		add_filter( 'the_title', 'ScholarPerson::replace_title', 10, 3 );
-		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
-		add_filter( 'the_content', 'ScholarPerson::replace_content', 1, 3 );
+		// add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
+		// add_filter( 'the_content', 'ScholarPerson::replace_content', 1, 3 );
 		
 		// Custom Sidebar:
 		add_action( 'widgets_init', 'ScholarPerson::widgets' );

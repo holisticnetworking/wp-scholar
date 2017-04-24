@@ -1,9 +1,12 @@
 <?php
-/*
-// News Feeds:	Manage RSS and Atom feeds here.
-*/
+/**
+ * Award
+ * 
+ * Display an award
+ */
+namespace WPScholar;
 
-class ScholarAward {
+class Award {
 	
 	public function register_type() {
 		register_post_type('award', array(
@@ -60,7 +63,7 @@ class ScholarAward {
 		endif;
 	}
 	
-	public function ScholarAward() {
+	public function __construct() {
 		add_action( 'save_post', 'ScholarAward::save_details' );
 	}
 }

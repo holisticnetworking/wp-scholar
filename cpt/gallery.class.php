@@ -1,9 +1,12 @@
 <?php
-/*
-// Gallery:	Post type exclusively for displaying media galleries.
-*/
+/**
+ * Gallery
+ * 
+ * Display a collection of images
+ */
+namespace WPScholar;
 
-class ScholarGallery {
+class Gallery {
 	
 	public function register_type() {
 		register_post_type('gallery', array(
@@ -25,6 +28,11 @@ class ScholarGallery {
 			'description'	=> 'Used to display media galleries',
 			'public'		=> true
 		));
+	}
+	
+	public function __construct() 
+	{
+	
 	}
 }
 ?>

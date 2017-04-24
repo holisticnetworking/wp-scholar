@@ -1,9 +1,13 @@
 <?php
-/*
-// Publication:	Bibliographical information.
-*/
+/**
+ * Publication
+ */
 
-class ScholarPublication {
+namespace WPScholar;
+require_once WP_PLUGIN_DIR . '/easy-inputs/easy-inputs.php';
+use EasyInputs\EasyInputs;
+
+class Publication {
 	
 	public function register_type() {
 		register_post_type('publication', array(
@@ -57,12 +61,14 @@ class ScholarPublication {
 		);
 	}
 	
-
-	public static function add_meta_boxes() {
-		add_meta_box( 'citation', 'Citation Information', 'ScholarPublication::citation', 'publication', 'normal', 'high' );
-	}
-	
 	public static function citation( $post ) {
+        $pub = new EasyInputs(
+            [
+            'name'  => 'wps-publication',
+            'type'  => 'meta'
+            ]
+        );
+		
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_citation_nonce' );
 		$format		= get_post_meta( $post->ID, 'scholar_format', true );
@@ -87,7 +93,7 @@ class ScholarPublication {
 			'online_journal'	=> 'Online Journal (with DOI)'
 		);
 		
-		// Form inputs:
+		/* Form inputs:
 		echo '<p><label style="display:block;" for="scholar_format">Format of Cited Work:</label>';
 			echo '<select type="text" id="scholar_format" name="scholar_format">';
 				echo '<option value="">[[Please Select]]</option>';
@@ -102,6 +108,8 @@ class ScholarPublication {
 					echo $option;
 				endforeach;
 			echo '</select></p>';
+		*/
+		// echo $this->
 		echo '<p><label style="display:block;" for="scholar_author">Author(s) of work:</label>';
 			echo '<input style="width: 100%" type="text" id="scholar_author" name="scholar_author" value="' . $author . '" maxlength="200" /></p>';
 		echo '<p><label style="display:block;" for="scholar_article">Article Title:</label>';
@@ -163,8 +171,9 @@ class ScholarPublication {
 		add_post_meta($post_id, 'scholar_url', $url, true) or update_post_meta( $post_id, 'scholar_url', $url);
 	}
 	
-	public function ScholarPublication() {
-		add_action( 'save_post', 'ScholarPublication::save_citation' );
+	public function __construct() {
+	    // add_action('admin_init', [ $this, 'registerEi' ]);
+		add_action('save_post', 'ScholarPublication::save_citation');
 	}
 }
 ?>

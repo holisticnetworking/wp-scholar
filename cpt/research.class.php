@@ -1,9 +1,10 @@
 <?php
-/*
-// Publication:	Bibliographical information.
-*/
+/**
+ * Research
+ */
+namespace WPScholar;
 
-class ScholarResearch {
+class Research {
 	
 	public function register_type() {
 		register_post_type('research', array(
@@ -47,5 +48,9 @@ class ScholarResearch {
 			)
 		);
 	} */
+	
+	public function __construct() {
+		add_action( 'save_post', 'ScholarAward::save_details' );
+	}
 }
 ?>

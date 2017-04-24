@@ -1,9 +1,12 @@
 <?php
-/*
-// News Posts:	For managing news items.
-*/
+/**
+ * News
+ * 
+ * New and noteable information.
+ */
+namespace WPScholar;
 
-class ScholarNews {
+class News {
 	
 	public function register_type() {
 		register_post_type('news', array(
@@ -61,7 +64,7 @@ class ScholarNews {
 	}
 	
 	
-	public function ScholarNews() {
+	public function __construct() {
 		add_action( 'save_post', 'ScholarNews::save_date' );
 	}
 }
