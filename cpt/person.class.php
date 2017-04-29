@@ -26,7 +26,7 @@ class Person {
 			'description'			=> 'Display information about current grad students or interns with which you are working.',
 			'public'				=> true,
 			'supports'				=> array('thumbnail'),
-			'register_meta_box_cb'	=> 'ScholarPerson::add_meta_boxes',
+			'register_meta_box_cb'	=> 'WPScholar\Person::add_meta_boxes',
 			'has_archive'			=> 'people',
 			'rewrite'				=> array(
 				'with_front'	=> false,
@@ -37,14 +37,14 @@ class Person {
 	}
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'name', 'Name', 'ScholarPerson::name', 'person', 'normal', 'high' );
-		add_meta_box( 'title', 'Titles', 'ScholarPerson::title', 'person', 'normal', 'high' );
-		add_meta_box( 'education', 'Education', 'ScholarPerson::education', 'person', 'normal', 'high' );
-		add_meta_box( 'address', 'Address', 'ScholarPerson::address', 'person', 'normal', 'high' );
-		add_meta_box( 'web', 'Web Addresses', 'ScholarPerson::web', 'person', 'normal', 'high' );
-		add_meta_box( 'bio', 'Biography', 'ScholarPerson::bio', 'person', 'normal', 'high' );
-		add_meta_box( 'interests', 'Academic Interests', 'ScholarPerson::interests', 'person', 'normal', 'high' );
-		add_meta_box( 'display_options', 'Display Options', 'ScholarPerson::display_options', 'person', 'side', 'high' );
+		add_meta_box( 'name', 'Name', 'WPScholar\Person::name', 'person', 'normal', 'high' );
+		add_meta_box( 'title', 'Titles', 'WPScholar\Person::title', 'person', 'normal', 'high' );
+		add_meta_box( 'education', 'Education', 'WPScholar\Person::education', 'person', 'normal', 'high' );
+		add_meta_box( 'address', 'Address', 'WPScholar\Person::address', 'person', 'normal', 'high' );
+		add_meta_box( 'web', 'Web Addresses', 'WPScholar\Person::web', 'person', 'normal', 'high' );
+		add_meta_box( 'bio', 'Biography', 'WPScholar\Person::bio', 'person', 'normal', 'high' );
+		add_meta_box( 'interests', 'Academic Interests', 'WPScholar\Person::interests', 'person', 'normal', 'high' );
+		add_meta_box( 'display_options', 'Display Options', 'WPScholar\Person::display_options', 'person', 'side', 'high' );
 		// Rename the "Featured Image"
 		remove_meta_box('postimagediv', 'person', 'side');
 		add_meta_box('postimagediv', __('Profile Picture'), 'post_thumbnail_meta_box', 'person', 'side', 'high');
@@ -126,7 +126,7 @@ class Person {
 		
 		// Update the post slug:
 		// unhook this function to prevent infinite looping
-        remove_action( 'save_post', 'ScholarPerson::save_name' );
+        remove_action( 'save_post', 'WPScholar\Person::save_name' );
 		$post_name			= implode(' ', compact( 'prefix', 'first', 'middle', 'last' ));
 		if(!empty($suffix)) :
 			$post_name		.= ', ' . $suffix;
@@ -137,7 +137,7 @@ class Person {
             'post_name' => sanitize_title( $post_name ) // do your thing here
         ));
         // re-hook this function
-        add_action( 'save_post', 'ScholarPerson::save_name' );
+        add_action( 'save_post', 'WPScholar\Person::save_name' );
 	}
 	
 	
@@ -392,9 +392,9 @@ class Person {
 		// Use nonce for verification
 		wp_nonce_field( plugin_basename( __FILE__ ), 'scholar_person_display_options_nonce' );
 		$display	= get_post_meta( $post->ID, 'scholar_person_display', true );
-		$index		= $display['index'] > 0 ? 'checked="checked"' : '';
-		$page		= $display['single_page'] > 0 ? 'checked="checked"' : '';
-		$contact	= $display['contact'] > 0 ? 'checked="checked"' : '';
+		$index		= !empty($display['index']) ? 'checked="checked"' : '';
+		$page		= !empty($display['single_page']) ? 'checked="checked"' : '';
+		$contact	= !empty($display['contact']) ? 'checked="checked"' : '';
 		// die( print_r( $display ) );
 		
 		// Form inputs:
@@ -457,10 +457,10 @@ class Person {
 		global $post;
 		$type	= get_post_type( $post );
 		if($type == 'person') :
-			// remove_filter( 'ScholarPerson::replace_content' );
+			// remove_filter( 'WPScholar\Person::replace_content' );
 			// $content	= apply_filters( 'the_content', get_post_meta( $post->ID, 'scholar_bio', true ) );
 			$content	= get_post_meta( $post->ID, 'scholar_bio', true );
-			// add_filter( 'ScholarPerson::replace_content' );
+			// add_filter( 'WPScholar\Person::replace_content' );
 		endif;
 		return $content;
 	}
@@ -531,22 +531,22 @@ class Person {
 	
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarPerson::save_name' );
-		add_action( 'save_post', 'ScholarPerson::save_address' );
-		add_action( 'save_post', 'ScholarPerson::save_web' );
-		add_action( 'save_post', 'ScholarPerson::save_bio' );
-		add_action( 'save_post', 'ScholarPerson::save_title' );
-		add_action( 'save_post', 'ScholarPerson::save_education' );
-		add_action( 'save_post', 'ScholarPerson::save_display_options' );
-		add_action( 'save_post', 'ScholarPerson::save_interests' );
+		add_action( 'save_post', 'WPScholar\Person::save_name' );
+		add_action( 'save_post', 'WPScholar\Person::save_address' );
+		add_action( 'save_post', 'WPScholar\Person::save_web' );
+		add_action( 'save_post', 'WPScholar\Person::save_bio' );
+		add_action( 'save_post', 'WPScholar\Person::save_title' );
+		add_action( 'save_post', 'WPScholar\Person::save_education' );
+		add_action( 'save_post', 'WPScholar\Person::save_display_options' );
+		add_action( 'save_post', 'WPScholar\Person::save_interests' );
 		
 		// Replace WP the_content and the_title with Scholar text:
-		add_filter( 'the_title', 'ScholarPerson::replace_title', 10, 3 );
-		// add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
-		// add_filter( 'the_content', 'ScholarPerson::replace_content', 1, 3 );
+		add_filter( 'the_title', 'WPScholar\Person::replace_title', 10, 3 );
+		// add_filter( 'wp_title', 'WPScholar\Person::wp_title', 1, 2 );
+		// add_filter( 'the_content', 'WPScholar\Person::replace_content', 1, 3 );
 		
 		// Custom Sidebar:
-		add_action( 'widgets_init', 'ScholarPerson::widgets' );
+		add_action( 'widgets_init', 'WPScholar\Person::widgets' );
 	}
 }
 ?>

@@ -29,7 +29,7 @@ class Publication {
 			'description'			=> 	'Bibliographical information',
 			'public'				=> true,
 			'supports'				=> array('thumbnail', 'title'),
-			'register_meta_box_cb'	=> 'ScholarPublication::add_meta_boxes',
+			'register_meta_box_cb'	=> 'WPScholar\Publication::add_meta_boxes',
 			'taxonomies'			=> array(),
 			'has_archive'			=> 'publications',
 			'rewrite'				=> array(
@@ -40,7 +40,7 @@ class Publication {
 	}
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'citation', 'Citation Information', 'ScholarPublication::citation', 'publication', 'normal', 'high' );
+		add_meta_box( 'citation', 'Citation Information', 'WPScholar\Publication::citation', 'publication', 'normal', 'high' );
 	}
 	
 	public static function register_taxonomy() {
@@ -173,7 +173,7 @@ class Publication {
 	
 	public function __construct() {
 	    // add_action('admin_init', [ $this, 'registerEi' ]);
-		add_action('save_post', 'ScholarPublication::save_citation');
+		add_action('save_post', 'WPScholar\Publication::save_citation');
 	}
 }
 ?>

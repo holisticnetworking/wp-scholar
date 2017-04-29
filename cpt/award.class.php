@@ -29,12 +29,12 @@ class Award {
 			'public'		=> true,
 			'supports'		=> array('thumbnail'),
 			'taxonomies'	=> array(),
-			'register_meta_box_cb'	=> 'ScholarAward::add_meta_boxes'
+			'register_meta_box_cb'	=> [&$this, 'add_meta_boxes']
 		));
 	}
 	
 	public function add_meta_boxes() {
-		add_meta_box( 'award-details', 'Award Details', 'ScholarAward::details', 'award', 'main', 'high' );
+		add_meta_box( 'award-details', 'Award Details', 'WPScholar\Award::details', 'award', 'main', 'high' );
 	}
 	
 	
@@ -64,7 +64,7 @@ class Award {
 	}
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarAward::save_details' );
+		add_action( 'save_post', 'WPScholar\Award::save_details' );
 	}
 }
 ?>

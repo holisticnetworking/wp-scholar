@@ -50,7 +50,7 @@ class Research {
 	} */
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarAward::save_details' );
+		// add_action( 'save_post', 'WPScholar\Research::save_details' );
 	}
 }
 ?>

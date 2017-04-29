@@ -30,6 +30,9 @@ use WPScholar\Person;
 use WPScholar\Publication;
 use WPScholar\Research;
 
+require_once WP_PLUGIN_DIR . '/easy-inputs/easy-inputs.php';
+use EasyInputs\EasyInputs;
+
 class WPScholar {
 	
 	public static function admin_pages() {
@@ -75,35 +78,49 @@ class WPScholar {
 	}
 	
 	public static function content_types() {
+		$wpst = new EasyInputs([
+		    'name'  => 'WPScholarTypes',
+		    'type'  => 'options'
+		]);
+		
 		// Handle submissions:
 		if(!empty($_POST['submit']) && wp_verify_nonce($_POST['content-types-nonce'],'content_types')) :
 			$save	= array();
 			foreach($_POST['types'] as $type) :
 				$save[]	= sanitize_text_field($type);
 			endforeach;
-			update_option('wp_scholar', $save);
+			update_option('WPScholarTypes', $save);
 		endif;
-		$types	= get_option('wp_scholar', array('post', 'page'));
+		
+		// Our form:
+		$types	= get_option('WPScholarTypes', array('post', 'page'));
+				
 		?>
 		<div class="wrap">
 			<div class="icon32 icon32-posts-post" id="icon-edit"><br></div><h2>Administer Allowed Content Types</h2>
 			<p>Users of this website are allowed to use the following content types:</p>
-			<form id="content-types" method="post" action="">
-				<?php wp_nonce_field( 'content_types', 'content-types-nonce' ) ?>
-				<ul>
-					<li><input type="checkbox" class="type-select" name="types[]" value="post" id="post" <?php if(in_array('post', $types)) : echo 'checked="checked"'; endif; ?>><label for="post">Blog Posts</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="page" id="page" <?php if(in_array('page', $types)) : echo 'checked="checked"'; endif; ?>><label for="page">Pages</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="publication" id="publication" <?php if(in_array('publication', $types)) : echo 'checked="checked"'; endif; ?>><label for="publication">Publications</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="research" id="research" <?php if(in_array('research', $types)) : echo 'checked="checked"'; endif; ?>><label for="research">Research</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="course" id="course" <?php if(in_array('course', $types)) : echo 'checked="checked"'; endif; ?>><label for="course">Courses</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="grad_study" id="grad_study" <?php if(in_array('grad_study', $types)) : echo 'checked="checked"'; endif; ?>><label for="gradstudy">Grad Studies</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="person" id="person" <?php if(in_array('person', $types)) : echo 'checked="checked"'; endif; ?>><label for="person">People</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="award" id="award" <?php if(in_array('award', $types)) : echo 'checked="checked"'; endif; ?>><label for="award">Awards and Honors</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="feed" id="feed" <?php if(in_array('feed', $types)) : echo 'checked="checked"'; endif; ?>><label for="feed">RSS Feeds</label></li>
-					<li><input type="checkbox" class="type-select" name="types[]" value="news" id="news" <?php if(in_array('news', $types)) : echo 'checked="checked"'; endif; ?>><label for="news">News Items</label></li>
-				</ul>
-				<input type="submit" value="Update Allowed Content Types" class="button button-primary" name="submit" id="submit" />
-			</form>
+			<?php echo $wpst->Form->open();
+			    echo $wpst->Form->nonce();
+			    echo $wpst->Form->checkbox(
+			        'types',
+			        [
+                        'label'     => __('Available Post Types'),
+                        'options'   => [
+                            ['value' => 'Post', 'name' => __('Posts')],
+                            ['value' => 'Page', 'name' => __('Pages')],
+                            ['value' => 'Publication', 'name' => __('Publications')],
+                            ['value' => 'Research', 'name' => __('Research')],
+                            ['value' => 'Course', 'name' => __('Courses')],
+                            ['value' => 'GradStudy', 'name' => __('Grad Studies')],
+                            ['value' => 'Person', 'name' => __('People')],
+                            ['value' => 'Award', 'name' => __('Awards')],
+                            ['value' => 'Feed', 'name' => __('News Feeds')],
+                            ['value' => 'News', 'name' => __('News Items')],
+                        ]
+			        ]
+			    );
+			    echo $wpst->Form->submit_button('Submit', ['label' => false, 'value' => _('Update post type settings.')]);
+			echo $wpst->Form->close(); ?>
 		</div>
 		<?php
 	}

@@ -29,14 +29,14 @@ class Course {
 			'public'		=> true,
 			'supports'		=> array('title', 'thumbnail'),
 			'taxonomies'	=> array('category', 'post_tag'),
-			'register_meta_box_cb'	=> 'ScholarCourse::add_meta_boxes'
+			'register_meta_box_cb'	=> 'WPScholar\Course::add_meta_boxes'
 		));
 	}
 	
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'description', 'Course Description', 'ScholarCourse::description', 'course', 'normal', 'high' );
-		add_meta_box( 'schedule', 'Course Schedule', 'ScholarCourse::schedule', 'course', 'normal', 'high' );
+		add_meta_box( 'description', 'Course Description', 'WPScholar\Course::description', 'course', 'normal', 'high' );
+		add_meta_box( 'schedule', 'Course Schedule', 'WPScholar\Course::schedule', 'course', 'normal', 'high' );
 	}
 	
 	public static function description( $post ) {
@@ -76,7 +76,7 @@ class Course {
 		endforeach;
 		echo '<label>New:</label>';
 		echo '<fieldset><legend></legend>';
-			echo ScholarCourse::daysOfTheWeek();
+			echo Course::daysOfTheWeek();
 			echo '<p>Time</p>';
 			echo '<p>Length</p>';
 		echo '</fieldset>';
@@ -99,8 +99,8 @@ class Course {
 	}
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarCourse::save_description' );
-		add_action( 'save_post', 'ScholarCourse::save_schedule' );
+		add_action( 'save_post', 'WPScholar\Course::save_description' );
+		add_action( 'save_post', 'WPScholar\Course::save_schedule' );
 	}
 }
 ?>

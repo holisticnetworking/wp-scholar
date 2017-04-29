@@ -33,7 +33,7 @@ class GradStudy {
 	}
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarAward::save_details' );
+		add_action( 'save_post', 'WPScholar\GradStudy::save_details' );
 	}
 }
 ?>

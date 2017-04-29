@@ -29,13 +29,13 @@ class News {
 			'public'				=> true,
 			'supports'				=> array('title', 'editor', 'excerpt', 'thumbnail', 'comments'),
 			'taxonomies'			=> array('category', 'post_tag'),
-			'register_meta_box_cb'	=> 'ScholarNews::add_meta_boxes'
+			'register_meta_box_cb'	=> 'WPScholar\News::add_meta_boxes'
 		));
 	}
 	
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'news-date', 'Date of Event', 'ScholarNews::date', 'news', 'side', 'high' );
+		add_meta_box( 'news-date', 'Date of Event', 'WPScholar\News::date', 'news', 'side', 'high' );
 	}
 	
 	
@@ -65,7 +65,7 @@ class News {
 	
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarNews::save_date' );
+		add_action( 'save_post', 'WPScholar\News::save_date' );
 	}
 }
 ?>

@@ -33,12 +33,12 @@ class Feed {
 				'slug'			=> 'scholar_feed',
 				'with_front'	=> false
 			),
-			'register_meta_box_cb'	=> 'ScholarFeed::add_meta_boxes'
+			'register_meta_box_cb'	=> 'WPScholar\Feed::add_meta_boxes'
 		));
 	}
 	
 	public static function add_meta_boxes() {
-		add_meta_box( 'feed-details', 'Feed Details', 'ScholarFeed::details', 'feed', 'normal', 'high' );
+		add_meta_box( 'feed-details', 'Feed Details', 'WPScholar\Feed::details', 'feed', 'normal', 'high' );
 	}
 	
 	
@@ -86,7 +86,7 @@ class Feed {
 		return $title;
 	}
 	
-	public function the_title( $title, $id ) {
+	public static function the_title( $title, $id=1 ) {
 		global $id, $post;
 		if ( $id && $post && $post->post_type == 'feed' ) :
 			$feed	= get_post_meta( $id, 'scholar_feed_details' );
@@ -95,7 +95,7 @@ class Feed {
 		return $title;
 	}
 	
-	function wp_title( $title, $sep ) {
+	public static function wp_title( $title, $sep ) {
 		global $paged, $page, $post;
 		
 		$type	= get_post_type( $post );
@@ -122,9 +122,9 @@ class Feed {
 	}
 	
 	public function __construct() {
-		add_action( 'save_post', 'ScholarFeed::save_details' );
-		add_action( 'the_title', 'ScholarFeed::the_title' );
-		add_filter( 'wp_title', 'ScholarPerson::wp_title', 1, 2 );
+		add_action( 'save_post', 'WPScholar\Feed::save_details' );
+		add_action( 'the_title', 'WPScholar\Feed::the_title' );
+		add_filter( 'wp_title', 'WPScholar\Feed::wp_title', 1, 2 );
 	}
 }
 ?>

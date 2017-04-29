@@ -28,7 +28,7 @@ get_header(); ?>
 					?>
 				</header>
 				<section class="entry-content" itemprop="description">
-					<?php ScholarPerson::the_post_thumbnail_caption(); ?>
+					<?php WPScholar\Person::the_post_thumbnail_caption(); ?>
 					<?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'glc' ) ); ?>
 					<?php wp_link_pages( array( 'before' => '<div class="page-link">' . __( 'Pages:', 'glc' ), 'after' => '</div>' ) ); ?>
 					<?php edit_post_link( 'Edit This Content' ); ?> 
