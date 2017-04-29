@@ -24,7 +24,8 @@ get_header(); ?>
                         </div>
                         <div class="columns large-9 small-9">
                         <?php if ($display['single_page'] > 0) : ?>
-                            <h3 class="entry-title"><a href="<?php the_permalink(); ?>" title="<?php printf(esc_attr__('Permalink to %s', 'glc'), the_title_attribute('echo=0')); ?>" rel="bookmark"><?php the_title(); ?></a></h3><div class="academic">
+                            <h3 class="entry-title">
+                                <a href="<?php the_permalink(); ?>" title="<?php printf(esc_attr__('Permalink to %s', 'glc'), the_title_attribute('echo=0')); ?>" rel="bookmark"><?php the_title(); ?></a></h3><div class="academic">
                         <?php else : ?>
                             <h3 class="entry-title"><?php the_title(); ?></h3><div class="academic">
                         <?php endif; ?>

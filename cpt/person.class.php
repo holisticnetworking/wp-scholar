@@ -3,6 +3,7 @@
  * Person
  */
 namespace WPScholar;
+use \EasyInputs\EasyInputs;
 
 class Person
 {
@@ -57,55 +58,54 @@ class Person
     
     public static function name($post)
     {
+        $ei = new EasyInputs([
+            'name'  => 'Person',
+            'group' => 'name',
+            'type'  => 'meta'
+        ]);
         // Use nonce for verification
         wp_nonce_field(plugin_basename(__FILE__), 'scholar_name_nonce');
-        $prefix         = get_post_meta($post->ID, 'scholar_prefix', true);
+        $prefix     = get_post_meta($post->ID, 'scholar_prefix', true);
         $first      = get_post_meta($post->ID, 'scholar_first_name', true);
-        $middle         = get_post_meta($post->ID, 'scholar_middle_name', true);
+        $middle     = get_post_meta($post->ID, 'scholar_middle_name', true);
         $last       = get_post_meta($post->ID, 'scholar_last_name', true);
-        $gender         = get_post_meta($post->ID, 'scholar_gender', true);
-        $suffix         = get_post_meta($post->ID, 'scholar_suffix', true);
-        
+        $gender     = get_post_meta($post->ID, 'scholar_gender', true);
+        $suffix     = get_post_meta($post->ID, 'scholar_suffix', true);
+                
         echo sprintf(
             '<div class="scholar_row">
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%1$s:</label>
-					<input type="text" id="scholar_name_prefix" name="scholar_name_prefix" value="%2$s" size="5" maxlength="20" />
-				</div>
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%3$s:</label>
-					<input type="text" id="scholar_name_first" name="scholar_name_first" value="%4$s" size="5" maxlength="20" />
-				</div>
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%5$s:</label>
-					<input type="text" id="scholar_name_middle" name="scholar_name_middle" value="%6$s" size="5" maxlength="20" />
-				</div>
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%7$s:</label>
-					<input type="text" id="scholar_name_last" name="scholar_name_last" value="%8$s" size="5" maxlength="20" />
-				</div>
+				<div class="scholar_column large-4">%1$s</div>
+				<div class="scholar_column large-4">%2$s</div>
+				<div class="scholar_column large-4">%3$s</div>
 			<div class="scholar_row">
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%9$s:</label>
-					<input type="text" id="scholar_name_gender" name="scholar_name_gender" value="%10$s" size="5" maxlength="20" />
-				</div>
-				<div class="scholar_column large-3">
-					<label for="scholar_name_suffix">%11$s:</label>
-					<input type="text" id="scholar_name_suffix" name="scholar_name_suffix" value="%12$s" size="5" maxlength="20" />
-				</div>
+			    <div class="scholar_column large-4">%4$s</div>
+				<div class="scholar_column large-4">%5$s</div>
+				<div class="scholar_column large-4">%6$s</div>
 			</div>',
-            __('Prefix'),
-            esc_attr($prefix),
-            __('First'),
-            esc_attr($first),
-            __('Middle'),
-            esc_attr($middle),
-            __('Last'),
-            esc_attr($last),
-            __('Gender'),
-            esc_attr($gender),
-            __('Suffix'),
-            esc_attr($suffix)
+            $ei->Form->input(
+                'prefix',
+                ['label' => __('Prefix'), 'value' => $prefix]
+            ),
+            $ei->Form->input(
+                'first',
+                ['label' => __('First'), 'value' => $first]
+            ),
+            $ei->Form->input(
+                'middle',
+                ['label' => __('Middle'), 'value' => $middle]
+            ),
+            $ei->Form->input(
+                'last',
+                ['label' => __('Last'), 'value' => $last]
+            ),
+            $ei->Form->input(
+                'suffix',
+                ['label' => __('Suffix'), 'value' => $suffix]
+            ),
+            $ei->Form->input(
+                'gender',
+                ['label' => __('Gender'), 'value' => $gender]
+            )
         );
     }
     public static function save_name($post_id)
@@ -116,12 +116,24 @@ class Person
         }
         
         //sanitize user input
-        $prefix     = sanitize_text_field($_POST['scholar_name_prefix']);
-        $first  = sanitize_text_field($_POST['scholar_name_first']);
-        $middle     = sanitize_text_field($_POST['scholar_name_middle']);
-        $last   = sanitize_text_field($_POST['scholar_name_last']);
-        $gender     = sanitize_text_field($_POST['scholar_name_gender']);
-        $suffix     = sanitize_text_field($_POST['scholar_name_suffix']);
+        $prefix     = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['prefix'])
+            : null;
+        $first      = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['first'])
+            : null;
+        $middle     = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['middle'])
+            : null;
+        $last       = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['last'])
+            : null;
+        $gender     = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['gender'])
+            : null;
+        $suffix     = isset($_POST['Person']['name']) 
+            ? sanitize_text_field($_POST['Person']['name']['suffix'])
+            : null;
         
         // Save the data:
         add_post_meta($post_id, 'scholar_prefix', $prefix, true) or update_post_meta($post_id, 'scholar_prefix', $prefix);
@@ -151,6 +163,10 @@ class Person
     
     public static function title($post)
     {
+        $ei = new EasyInputs([
+            'name'  => 'Person',
+            'type'  => 'meta'
+        ]);
         // Use nonce for verification
         wp_nonce_field(plugin_basename(__FILE__), 'scholar_title_nonce');
         $titles         = get_post_meta($post->ID, 'scholar_title', true);
@@ -160,37 +176,34 @@ class Person
             echo sprintf(
                 '<div class="scholar_row">
 					<div class="scholar_column large-3">
-						<label>%s:</label>
+						%s
 					</div>
 					<div class="scholar_column large-9">
-						<input type="text" id="scholar_title" name="scholar_title[]" value="%s" size="40" maxlength="100" />
+						%s
 					</div>
 				</div>',
-                __('Title'),
-                esc_attr($title)
+                $ei->Form->label('title', __('Title')),
+                $ei->Form->input(
+                    'Person[title][]',
+                    ['label' => false, 'value' => esc_attr($title)]
+                )
             );
         endforeach;
         echo sprintf(
             '<div class="scholar_row">
 				<div class="scholar_column large-3">
-					<label>%s:</label>
+					%s
 				</div>
 				<div class="scholar_column large-9">
-					<input type="text" id="scholar_title" name="scholar_title[]" value="" size="40" maxlength="100" />
+					%s
 				</div>
 			</div>',
-            __('Title')
+            $ei->Form->label('Person[title][]', __('Title')),
+            $ei->Form->input(
+                'title',
+                ['label' => false, 'multiple' => true]
+            )
         );
-        /*
-		echo '<fieldset class="titles">';
-		foreach($titles as $title) :
-			echo '<p><label for="scholar_title">Title:</label>';
-				echo '<input type="text" id="scholar_title" name="scholar_title[]" value="'.esc_attr($title).'" size="40" maxlength="100" /></p>';
-		endforeach;
-		echo '<p><label for="scholar_name_gender">New Title:</label>';
-			echo '<input type="text" id="scholar_title" name="scholar_title[]" value="" size="40" maxlength="100" /></p>';
-		echo '</fieldset>';
-		*/
         echo '<input type="button" id="new-title" value="Add Title">';
     }
     public static function save_title($post_id)
@@ -453,18 +466,6 @@ class Person
         add_post_meta($post_id, 'scholar_person_display', $save, true) or update_post_meta($post_id, 'scholar_person_display', $save);
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     /*
 	// Replace Person "titles," which don't exist, with the person's name.
 	*/
@@ -579,7 +580,7 @@ class Person
         add_action('save_post', 'WPScholar\Person::save_bio');
         add_action('save_post', 'WPScholar\Person::save_title');
         add_action('save_post', 'WPScholar\Person::save_education');
-        add_action('save_post', 'WPScholar\Person::save_display_options');
+        // add_action('save_post', 'WPScholar\Person::save_display_options');
         add_action('save_post', 'WPScholar\Person::save_interests');
         
         // Replace WP the_content and the_title with Scholar text:
