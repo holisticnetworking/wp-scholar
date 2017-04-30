@@ -9,7 +9,7 @@ namespace WPScholar;
 class Gallery
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('gallery', array(
             'labels'        => array(

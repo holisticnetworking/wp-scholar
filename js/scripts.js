@@ -2,10 +2,12 @@
 
 jQuery(document).ready(function() {
 	// Add new video input:
-	jQuery("#new-video").click(function() {
+	jQuery("#new-title").click(function() {
 		jQuery().addTitleField();
 		return false;
-	});
-	
-	
+	});	
+});
+
+jQuery.fn.addTitleField     = function() {
+    
 }

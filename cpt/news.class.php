@@ -9,7 +9,7 @@ namespace WPScholar;
 class News
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('news', array(
             'labels'                => array(
@@ -31,12 +31,12 @@ class News
             'public'                => true,
             'supports'              => array('title', 'editor', 'excerpt', 'thumbnail', 'comments'),
             'taxonomies'            => array('category', 'post_tag'),
-            'register_meta_box_cb'  => 'WPScholar\News::add_meta_boxes'
+            'register_meta_box_cb'  => 'WPScholar\News::addMetaBoxes'
         ));
     }
     
     
-    public static function add_meta_boxes()
+    public static function addMetaBoxes()
     {
         add_meta_box('news-date', 'Date of Event', 'WPScholar\News::date', 'news', 'side', 'high');
     }
@@ -54,7 +54,7 @@ class News
         echo '<p><label for="scholar_news_date">This can be different than publish date:</label></p>';
             echo '<p><input type="text" id="scholar_news_date" name="scholar_news_date" value="'.esc_attr($date).'" size="10" maxlength="20" /></p>';
     }
-    public static function save_date($post_id)
+    public static function saveDate($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_news_date_nonce']) || ! wp_verify_nonce($_POST['scholar_news_date_nonce'], plugin_basename(__FILE__))) {
@@ -73,6 +73,6 @@ class News
     
     public function __construct()
     {
-        add_action('save_post', 'WPScholar\News::save_date');
+        add_action('save_post', 'WPScholar\News::saveDate');
     }
 }

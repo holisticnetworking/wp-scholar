@@ -16,6 +16,10 @@
 	width: 33%;
 }
 
+.large-6 {
+	width: 49%;
+}
+
 .large-9 {
 	width: 74%;
 }
@@ -24,8 +28,15 @@
 	display: block;
 	padding: 5px;
 	background: #eee;
+	font-weight: 600;
 }
 
 .scholar_row input[type=text] {
 	width: 100%;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin: 20px 0 20px 0;
 }

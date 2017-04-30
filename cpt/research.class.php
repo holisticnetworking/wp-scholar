@@ -7,7 +7,7 @@ namespace WPScholar;
 class Research
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('research', array(
             'labels'        => array(
@@ -33,7 +33,7 @@ class Research
         ));
     }
     
-    /* public function register_taxonomy() {
+    /* public function registerTaxonomy() {
 		// "Pair" taxonomy exists to allow two formulas to be associated with one another.
 		register_taxonomy(
 			'pub_cat',

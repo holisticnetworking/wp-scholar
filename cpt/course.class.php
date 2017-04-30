@@ -9,7 +9,7 @@ namespace WPScholar;
 class Course
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('course', array(
             'labels'        => array(
@@ -31,12 +31,12 @@ class Course
             'public'        => true,
             'supports'      => array('title', 'thumbnail'),
             'taxonomies'    => array('category', 'post_tag'),
-            'register_meta_box_cb'  => 'WPScholar\Course::add_meta_boxes'
+            'register_meta_box_cb'  => 'WPScholar\Course::addMetaBoxes'
         ));
     }
     
     
-    public static function add_meta_boxes()
+    public static function addMetaBoxes()
     {
         add_meta_box('description', 'Course Description', 'WPScholar\Course::description', 'course', 'normal', 'high');
         add_meta_box('schedule', 'Course Schedule', 'WPScholar\Course::schedule', 'course', 'normal', 'high');
@@ -54,7 +54,7 @@ class Course
             echo '<input type="text" id="scholar_course_number" name="scholar_course_number" value="'.esc_attr($number).'" size="50" maxlength="50" />';
         wp_editor($description, 'scholar_course_description', $settings = array());
     }
-    public static function save_description($post_id)
+    public static function saveDescription($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_description_nonce']) || ! wp_verify_nonce($_POST['scholar_description_nonce'], plugin_basename(__FILE__))) {
@@ -89,7 +89,7 @@ class Course
             echo '<p>Length</p>';
         echo '</fieldset>';
     }
-    public static function save_schedule($post_id)
+    public static function saveSchedule($post_id)
     {
     }
     
@@ -109,7 +109,7 @@ class Course
     
     public function __construct()
     {
-        add_action('save_post', 'WPScholar\Course::save_description');
-        add_action('save_post', 'WPScholar\Course::save_schedule');
+        add_action('save_post', 'WPScholar\Course::saveDescription');
+        add_action('save_post', 'WPScholar\Course::saveSchedule');
     }
 }

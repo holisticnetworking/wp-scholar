@@ -9,7 +9,7 @@ namespace WPScholar;
 class Feed
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('feed', array(
             'labels'                => array(
@@ -35,11 +35,11 @@ class Feed
                 'slug'          => 'scholar_feed',
                 'with_front'    => false
             ),
-            'register_meta_box_cb'  => 'WPScholar\Feed::add_meta_boxes'
+            'register_meta_box_cb'  => 'WPScholar\Feed::addMetaBoxes'
         ));
     }
     
-    public static function add_meta_boxes()
+    public static function addMetaBoxes()
     {
         add_meta_box('feed-details', 'Feed Details', 'WPScholar\Feed::details', 'feed', 'normal', 'high');
     }
@@ -61,7 +61,7 @@ class Feed
         echo '<p><label for="scholar_feeds_description">Feed Description:</label></p>';
             echo '<p><textarea id="scholar_feeds_description" name="scholar_feeds[description]" style="width: 100%; height: 200px;">' . $description . '</textarea></p>';
     }
-    public static function save_details($post_id)
+    public static function saveDetails($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_feeds_nonce']) || ! wp_verify_nonce($_POST['scholar_feeds_nonce'], plugin_basename(__FILE__))) {
@@ -81,7 +81,7 @@ class Feed
     
     
     
-    public static function replace_title($title, $id)
+    public static function replaceTitle($title, $id)
     {
         global $id, $post;
         if ($id && $post && $post->post_type == 'feed') :
@@ -93,7 +93,7 @@ class Feed
         return $title;
     }
     
-    public static function the_title($title, $id = 1)
+    public static function theTitle($title, $id = 1)
     {
         global $id, $post;
         if ($id && $post && $post->post_type == 'feed') :
@@ -103,7 +103,7 @@ class Feed
         return $title;
     }
     
-    public static function wp_title($title, $sep)
+    public static function wpTitle($title, $sep)
     {
         global $paged, $page, $post;
         
@@ -134,8 +134,8 @@ class Feed
     
     public function __construct()
     {
-        add_action('save_post', 'WPScholar\Feed::save_details');
-        add_action('the_title', 'WPScholar\Feed::the_title');
-        add_filter('wp_title', 'WPScholar\Feed::wp_title', 1, 2);
+        add_action('save_post', 'WPScholar\Feed::saveDetails');
+        add_action('the_title', 'WPScholar\Feed::theTitle');
+        add_filter('wp_title', 'WPScholar\Feed::wpTitle', 1, 2);
     }
 }

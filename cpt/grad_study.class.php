@@ -9,7 +9,7 @@ namespace WPScholar;
 class GradStudy
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('grad_study', array(
             'labels'        => array(

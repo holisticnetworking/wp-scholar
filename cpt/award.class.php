@@ -9,7 +9,7 @@ namespace WPScholar;
 class Award
 {
     
-    public function register_type()
+    public function registerType()
     {
         register_post_type('award', array(
             'labels'        => array(
@@ -31,11 +31,11 @@ class Award
             'public'        => true,
             'supports'      => array('thumbnail'),
             'taxonomies'    => array(),
-            'register_meta_box_cb'  => [&$this, 'add_meta_boxes']
+            'register_meta_box_cb'  => [&$this, 'addMetaBoxes']
         ));
     }
     
-    public function add_meta_boxes()
+    public function addMetaBoxes()
     {
         add_meta_box('award-details', 'Award Details', 'WPScholar\Award::details', 'award', 'main', 'high');
     }
@@ -52,10 +52,11 @@ class Award
         echo '<p><label for="scholar_award_details_description">Feed Description:</label></p>';
             echo '<p><textarea id="scholar_award_details_description" name="scholar_award_details[description]">'.esc_attr($award['description']).'</textarea></p>';
     }
-    public static function save_details($post_id)
+    public static function saveDetails($post_id)
     {
         // Refuse without valid nonce:
-        if (! isset($_POST['scholar_award_details_nonce']) || ! wp_verify_nonce($_POST['scholar_award_details_nonce'], plugin_basename(__FILE__))) {
+        if (! isset($_POST['scholar_award_details_nonce']) 
+            || ! wp_verify_nonce($_POST['scholar_award_details_nonce'], plugin_basename(__FILE__))) {
             return;
         }
         
@@ -72,6 +73,6 @@ class Award
     
     public function __construct()
     {
-        add_action('save_post', 'WPScholar\Award::save_details');
+        add_action('save_post', 'WPScholar\Award::saveDetails');
     }
 }
