@@ -46,7 +46,7 @@ class Course
     {
         // Use nonce for verification
         wp_nonce_field(plugin_basename(__FILE__), 'scholar_description_nonce');
-        $number             = get_post_meta($post->ID, 'scholar_course_number', true);
+        $number         = get_post_meta($post->ID, 'scholar_course_number', true);
         $description    = get_post_meta($post->ID, 'scholar_course_description', true);
         
         // Form inputs:

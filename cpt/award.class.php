@@ -6,6 +6,8 @@
  */
 namespace WPScholar;
 
+use \EasyInputs\EasyInputs;
+
 class Award
 {
     
@@ -27,31 +29,39 @@ class Award
                 'parent_item_colon'     => '',
                 'menu_name'             => 'Awards'
                 ),
-            'description'   =>  'Lauds awards and honors',
-            'public'        => true,
-            'supports'      => array('thumbnail'),
-            'taxonomies'    => array(),
+            'description'           =>  'Lauds awards and honors',
+            'public'                => true,
+            'supports'              => ['title', 'thumbnail'],
+            'taxonomies'            => [],
             'register_meta_box_cb'  => [&$this, 'addMetaBoxes']
         ));
     }
     
     public function addMetaBoxes()
     {
-        add_meta_box('award-details', 'Award Details', 'WPScholar\Award::details', 'award', 'main', 'high');
+        add_meta_box('details', 'Details', 'WPScholar\Award::details', 'award', 'normal', 'high');
     }
     
     
     public static function details($post)
     {
+        $ei = new EasyInputs([
+            'name'  => 'Award',
+            'type'  => 'meta'
+        ]);
         // Use nonce for verification
         wp_nonce_field(plugin_basename(__FILE__), 'scholar_award_details_nonce');
-        $award      = get_post_meta($post->ID, 'scholar_award_details', true);
+        $date           = get_post_meta($post->ID, 'scholar_award_date', true);
+        $description    = get_post_meta($post->ID, 'scholar_award_description', true);
         
-        echo '<p><label for="scholar_award_details_title">Award Title (overrides what is provided by the feed itself):</label></p>';
-            echo '<p><input type="text" id="scholar_award_details_title" name="scholar_award_details[title]" value="'.esc_attr($award['title']).'" size="10" maxlength="200" /></p>';
-        echo '<p><label for="scholar_award_details_description">Feed Description:</label></p>';
-            echo '<p><textarea id="scholar_award_details_description" name="scholar_award_details[description]">'.esc_attr($award['description']).'</textarea></p>';
+        echo sprintf(
+            '<div class="scholar_row"><div class="scholar_column large-12">%s</div>', 
+            $ei->Form->input('date', ['label' => 'Award or Honor Date', 'value' => $date])
+        );
+        echo '<h2>Award Description</h2>';
+        echo $ei->Form->input('description', ['type' => 'editor', 'value' => $description]);
     }
+    
     public static function saveDetails($post_id)
     {
         // Refuse without valid nonce:
@@ -61,14 +71,16 @@ class Award
         }
         
         //sanitize user input
-        $award  = array();
-        foreach ($_POST['scholar_award_details'] as $key => $value) :
-            $award[$key]    = anitize_text_field($value);
-        endforeach;
-        if (!empty($award)) :
-            // Save the data:
-            add_post_meta($post_id, 'scholar_award_details', $award, true) or update_post_meta($post_id, 'scholar_award_details', $award);
-        endif;
+        $award          = [];
+        $date           = !empty($_POST['Award']['date'])
+            ? sanitize_text_field($_POST['Award']['date'])
+            : null;
+        $description    = !empty($_POST['description'])
+            ? esc_textarea($_POST['description'])
+            : null;
+        // Save the data:
+        update_post_meta($post_id, 'scholar_award_date', $date);
+        update_post_meta($post_id, 'scholar_award_description', $description);
     }
     
     public function __construct()
