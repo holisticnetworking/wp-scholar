@@ -44,3 +44,7 @@ legend {
     font-weight: 700;
     margin: 20px 0 20px 0;
 }
+
+.scholar_prototype {
+    display: none;
+}

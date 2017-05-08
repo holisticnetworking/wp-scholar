@@ -101,19 +101,19 @@ class Publication
         // Form inputs:
         echo '<div class="scholar_row">';
         echo $ei->Form->inputs([
-            'format'    => ['type' => 'select', 'options' => $formats],
-            'author',
-            'article',
-            'title',
-            'doi'       => ['label' => 'Document Object Identifyer'],
-            'translator',
-            'edition',
-            'editor',
-            'pub_city',
-            'publisher',
-            'pub_year',
-            'medium',
-            'url'
+            'format'        => ['type' => 'select', 'options' => $formats, 'value' => $format],
+            'author'        => ['value' => $author],
+            'article'       => ['value' => $article],
+            'title'         => ['value' => $title],
+            'doi'           => ['label' => 'Document Object Identifyer', 'value' => $doi],
+            'translator'    => ['value' => $translator],
+            'edition'       => ['value' => $edition],
+            'editor'        => ['value' => $editor],
+            'pub_city'      => ['value' => $pub_city],
+            'publisher'     => ['value' => $publisher],
+            'pub_year'      => ['value' => $pub_year],
+            'medium'        => ['value' => $medium],
+            'url'           => ['value' => $url]
         ],
         ['legend' => false]);
         echo '</div>';
@@ -128,19 +128,19 @@ class Publication
         }
         
         //sanitize user input
-        $format     = sanitize_text_field($_POST['scholar_format']);
-        $author     = sanitize_text_field($_POST['scholar_author']);
-        $article    = sanitize_text_field($_POST['scholar_article']);
-        $title      = sanitize_text_field($_POST['scholar_title']);
-        $doi        = sanitize_text_field($_POST['scholar_doi']);
-        $translator = sanitize_text_field($_POST['scholar_translator']);
-        $edition    = sanitize_text_field($_POST['scholar_edition']);
-        $editor     = sanitize_text_field($_POST['scholar_editor']);
-        $pub_city   = sanitize_text_field($_POST['scholar_pub_city']);
-        $publisher  = sanitize_text_field($_POST['scholar_publisher']);
-        $pub_year   = sanitize_text_field($_POST['scholar_pub_year']);
-        $medium     = sanitize_text_field($_POST['scholar_medium']);
-        $url        = sanitize_text_field($_POST['scholar_url']);
+        $format     = sanitize_text_field($_POST['Publication']['format']);
+        $author     = sanitize_text_field($_POST['Publication']['author']);
+        $article    = sanitize_text_field($_POST['Publication']['article']);
+        $title      = sanitize_text_field($_POST['Publication']['title']);
+        $doi        = sanitize_text_field($_POST['Publication']['doi']);
+        $translator = sanitize_text_field($_POST['Publication']['translator']);
+        $edition    = sanitize_text_field($_POST['Publication']['edition']);
+        $editor     = sanitize_text_field($_POST['Publication']['editor']);
+        $pub_city   = sanitize_text_field($_POST['Publication']['pub_city']);
+        $publisher  = sanitize_text_field($_POST['Publication']['publisher']);
+        $pub_year   = sanitize_text_field($_POST['Publication']['pub_year']);
+        $medium     = sanitize_text_field($_POST['Publication']['medium']);
+        $url        = sanitize_text_field($_POST['Publication']['url']);
         
         update_post_meta($post_id, 'scholar_format', $format);
         update_post_meta($post_id, 'scholar_author', $author);
