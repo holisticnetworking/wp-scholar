@@ -6,8 +6,17 @@
  */
 namespace WPScholar;
 
+use \EasyInputs\EasyInputs;
+
 class Course
 {
+    public $days = [];
+    
+    public $grade_option = [];
+    
+    public $class_type = [];
+    
+    public $career = [];
     
     public function registerType()
     {
@@ -31,86 +40,311 @@ class Course
             'public'        => true,
             'supports'      => array('title', 'thumbnail'),
             'taxonomies'    => array('category', 'post_tag'),
-            'register_meta_box_cb'  => 'WPScholar\Course::addMetaBoxes'
+            'register_meta_box_cb'  => [&$this, 'addMetaBoxes']
         ));
     }
     
     
     public static function addMetaBoxes()
     {
-        add_meta_box('description', 'Course Description', 'WPScholar\Course::description', 'course', 'normal', 'high');
-        add_meta_box('schedule', 'Course Schedule', 'WPScholar\Course::schedule', 'course', 'normal', 'high');
+        add_meta_box('number', 'Course Numbers', [&$this, 'number'], 'course', 'side', 'high');
+        add_meta_box('details', 'Course Details', [&$this, 'details'], 'course', 'normal', 'high');
+        add_meta_box('description', 'Course Description', [&$this, 'description'], 'course', 'normal', 'high');
+        add_meta_box('schedule', 'Course Schedule', [&$this, 'schedule'], 'course', 'normal', 'high');
+    }
+    
+    public static function number($post)
+    {
+        // Use nonce for verification
+        echo $this->ei->Form->nonce('scholar_number_nonce');
+        $numbers         = get_post_meta($post->ID, 'scholar_course_number', false);
+        
+        // Form inputs:
+        if(!empty($numbers)) :
+            foreach($numbers as $number) :
+                echo '<div class="scholar_row">';
+                echo $this->ei->Form->input( 
+                    'course_number',
+                    ['value' => $number, 'label' => 'Course Number:', 'multiple' => true]
+                );
+                echo '</div>';
+            endforeach;
+        else :
+            echo '<div class="scholar_row">';
+            echo $this->ei->Form->input( 
+                'course_number',
+                ['label' => 'Course Number:', 'multiple' => true]
+            );
+            echo '</div>';
+        endif;
+        
+        echo '<div class="scholar_prototype">';
+        echo $this->ei->Form->input( 
+            'course_number',
+            ['label' => 'Course Number:', 'multiple' => true]
+        );
+        echo '</div>';
+        
+        // Create new Course Number:
+        echo $this->ei->Form->button(
+            'new_number', [
+                'label' => false, 
+                'wrapper' => false, 
+                'value' => "Add New Course Number", 
+                "attrs" => [
+                    "class" => "button button-primary scholar_new"
+                ]
+            ]
+        );
+    }
+    public static function saveNumber($post_id)
+    {
+        // Refuse without valid nonce:
+        if (! isset($_POST['scholar_number_nonce']) || 
+            !$this->ei->Form->verifyNonce('scholar_number_nonce')) {
+            return;
+        }
+        $numbers    = get_post_meta($post_id, 'scholar_course_number', false);
+        // Sanitize user input
+        foreach($_POST['Course']['course_number'] as $number) :
+            $number = sanitize_text_field($number);
+            if(!empty($number)) :
+                // Save the data:
+                if(in_array($number, $numbers)) :
+                    update_post_meta($post_id, 'scholar_course_number', $number, $number);
+                else :
+                    add_post_meta($post_id, 'scholar_course_number', $number, false);
+                endif;
+            endif;
+        endforeach;
+    }
+    
+    public function details($post) {
+        // Use nonce for verification
+        echo $this->ei->Form->nonce('scholar_course_details_nonce');
+        $career         = get_post_meta($post->ID, 'scholar_course_career', true);
+        $credits        = get_post_meta($post->ID, 'scholar_course_credits', true);
+        $grading        = get_post_meta($post->ID, 'scholar_course_grading', true);
+        $image          = get_post_meta($post->ID, 'scholar_course_image', true);
+
+        // Form inputs:
+        echo '<div class="scholar_row">';
+            echo $this->ei->Form->input(
+                'career',
+                ['type' => 'radio', 'options' => $this->career, 'value' => $career]
+            );
+        echo '</div>';
+        echo '<div class="scholar_row">';
+            echo sprintf(
+                '<div class="scholar_column large-6">%s</div><div class="scholar_column large-6">%s</div>',
+                $this->ei->Form->input(
+                    'credits',
+                    [
+                        'label' => __('Credits'),
+                        'value' => $credits
+                    ]
+                ),
+                $this->ei->Form->select(
+                    'grading',
+                    [
+                        'label'     => __('Grading Option'),
+                        'value'     => $grading,
+                        'options'   => $this->grade_option
+                    ]
+                )
+            );
+        echo '</div>';
+    }
+    public function saveDetails($post_id) {
+        // Refuse without valid nonce:
+        if (!isset($_POST['scholar_course_details_nonce'])
+            || !$this->ei->Form->verifyNonce('scholar_course_details_nonce') ) {
+            return;
+        }
+        $career    = isset($_POST['Course']['career'])
+            ? sanitize_text_field($_POST['Course']['career'])
+            : null;
+        $credits    = isset($_POST['Course']['credits']) 
+            ? sanitize_text_field($_POST['Course']['credits']) 
+            : null;
+        $grading    = isset($_POST['Course']['grading']) 
+            ? sanitize_text_field($_POST['Course']['grading']) 
+            : null;
+        update_post_meta($post_id, 'scholar_course_career', $career);
+        update_post_meta($post_id, 'scholar_course_credits', $credits);
+        update_post_meta($post_id, 'scholar_course_grading', $grading);
     }
     
     public static function description($post)
     {
         // Use nonce for verification
-        wp_nonce_field(plugin_basename(__FILE__), 'scholar_description_nonce');
-        $number             = get_post_meta($post->ID, 'scholar_course_number', true);
+        echo $this->ei->Form->nonce('scholar_description_nonce');
         $description    = get_post_meta($post->ID, 'scholar_course_description', true);
-        
-        // Form inputs:
-        echo '<p><label for="scholar_course_number">Course Number:</label>';
-            echo '<input type="text" id="scholar_course_number" name="scholar_course_number" value="'.esc_attr($number).'" size="50" maxlength="50" />';
-        wp_editor($description, 'scholar_course_description', $settings = array());
+        echo $this->ei->Form->input('scholar_course_description', ['type' => 'editor', 'value' => $description]);
     }
     public static function saveDescription($post_id)
     {
         // Refuse without valid nonce:
-        if (! isset($_POST['scholar_description_nonce']) || ! wp_verify_nonce($_POST['scholar_description_nonce'], plugin_basename(__FILE__))) {
+        if (! isset($_POST['scholar_description_nonce']) || 
+            !$this->ei->Form->verifyNonce('scholar_description_nonce')) {
             return;
         }
         
-        //sanitize user input
-        $number             = sanitize_text_field($_POST['scholar_course_number']);
+        // Sanitize user input
         $description    = esc_textarea($_POST['scholar_course_description']);
         
         // Save the data:
-        add_post_meta($post_id, 'scholar_course_number', $number, true) or update_post_meta($post_id, 'scholar_course_number', $number);
-        add_post_meta($post_id, 'scholar_course_description', $description, true) or update_post_meta($post_id, 'scholar_course_description', $description);
+        update_post_meta($post_id, 'scholar_course_description', $description);
     }
     
     public static function schedule($post)
     {
         // Use nonce for verification
-        wp_nonce_field(plugin_basename(__FILE__), 'scholar_course_schedule_nonce');
-        $schedules          = get_post_meta($post->ID, 'scholar_course_schedule', false);
-        foreach ($schedules as $schedule) :
-            echo '<fieldset><legend></legend>';
-                echo '<p>Days of the week</p>';
-                echo '<p>Time</p>';
-                echo '<p>Length</p>';
-            echo '</fieldset>';
-        endforeach;
-        echo '<label>New:</label>';
-        echo '<fieldset><legend></legend>';
-            echo Course::daysOfTheWeek();
-            echo '<p>Time</p>';
-            echo '<p>Length</p>';
-        echo '</fieldset>';
+        echo $this->ei->Form->nonce('scholar_schedule_nonce');
+        $schedules  = get_post_meta($post->ID, 'scholar_course_schedule', false);
+        $count      = count($schedules);        
+        echo '<table class="course_schedules">';
+        if(!empty($schedules)) :
+            for($x=1; $x<$count; $x++) :
+                $schedule   = $schedules[$x];
+                echo sprintf(
+                    '<tr>
+                        <td width="20%" rowspan="4"><div class="scholar_row">%1$s</div></td>
+                        <td width="80%"><div class="scholar_row">%2$s</div></td>
+                    </tr>
+                    <tr>
+                        <td class="days_of_week"><div class="scholar_row">%3$s</div></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label><div class="scholar_row">%4$s</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="scholar_row">%5$s</div></td>
+                    </tr>',
+                    $this->ei->Form->input(
+                        'course_type',
+                        ['type' => 'radio', 'options' => $this->class_type, 'value' => $schedule['type']]
+                    ),
+                    $this->ei->Form->input(
+                        'instructor'
+                    ),
+                    $this->ei->Form->input(
+                        'weekdays',
+                        ['type' => 'checkbox', 'options' => $this->days, 'value' => $schedule['weekdays']]
+                    ),
+                    $this->ei->Form->input(
+                        'time',
+                        ['class' => 'time', 'value' => $schedule['time']]
+                    ),
+                    $this->ei->Form->input(
+                        'availability',
+                        [
+                            'type' => 'radio', 
+                            'options' => ['yes' => 'Yes', 'no' => 'No'], 
+                            'value' => $schedule['availabiity']
+                        ]
+                    )
+                );
+            endfor;
+        endif;
+        echo sprintf(
+            '<tr>
+                <td rowspan="4">%1$s</td>
+                <td><div class="scholar_row">%2$s</div></td>
+            </tr>
+            <tr>
+                <td class="days_of_week"><div class="scholar_row">%3$s</div></td>
+            </tr>
+            <tr>
+                <td>
+                    <label><div class="scholar_row">%4$s</div></td>
+            </tr>
+            <tr>
+                <td><div class="scholar_row">%5$s</div></td>
+            </tr>',
+            $this->ei->Form->input(
+                'course_type',
+                ['type' => 'radio', 'options' => $this->class_type]
+            ),
+            $this->ei->Form->input(
+                'instructor'
+            ),
+            $this->ei->Form->input(
+                'weekdays',
+                ['type' => 'checkbox', 'options' => $this->days]
+            ),
+            $this->ei->Form->input(
+                'time',
+                ['class' => 'time']
+            ),
+            $this->ei->Form->input(
+                'availability',
+                ['type' => 'radio', 'options' => ['yes' => 'Yes', 'no' => 'No']]
+            )
+        );
+        echo '</table>';
     }
     public static function saveSchedule($post_id)
     {
+        // Refuse without valid nonce:
+        if (! isset($_POST['scholar_schedule_nonce']) || 
+            !$this->ei->Form->verifyNonce('scholar_schedule_nonce')) {
+            return;
+        }
     }
-    
-    private static function daysOfTheWeek()
-    {
-        $days   = [ 'mon', 'tu', 'wed', 'thur', 'fri', 'sat', 'sun' ];
-        $checks     = '';
-        foreach ($days as $day) :
-            $capital    = ucfirst($day);
-            $checks         .= sprintf('<label for="%1$s"><input id="%1$s" type="checkbox" name="days[]" value="%1$s" />%2$s</label>', $day, $capital);
-        endforeach;
-        return sprintf(
-            '<fieldset><legend>Days of the Week</legend>%s</fieldset>',
-            $checks
-        );
+
+    public function enqueue_uploader() {
+        wp_enqueue_media();
+        wp_enqueue_script('uploader', plugins_url('easy-inputs/inc/js/uploader.js'));
     }
     
     public function __construct()
     {
-        add_action('save_post', 'WPScholar\Course::saveDescription');
-        add_action('save_post', 'WPScholar\Course::saveSchedule');
+        // Define our L10n compatible variables:
+        $this->days   = [ 
+            'mon'   => __("Monday"), 
+            'tu'    => __("Tuesday"), 
+            'wed'   => __("Wednesday"), 
+            'thur'  => __("Thursday"), 
+            'fri'   => __("Friday"), 
+            'sat'   => __("Saturday"), 
+            'sun'   => __("Sunday") 
+        ];
+    
+        $this->grade_option    = [
+            'graded'        => __("Graded"),
+            'stud_opt'      => __("Student Option"),
+            'sat_unsat'     => __("Satisfactory/Unsatisfactory"),
+            'multi_term'    => __("Multi-term") 
+        ];
+    
+        $this->class_type   = [
+            'LEC'   => __("Lecture"),
+            'LAB'   => __("Lab"),
+            'DIS'   => __("Discussion"),
+            'IND'   => __("Independent Study"),
+            'SEM'   => __("Seminar"),
+            'TA'    => __("Tutor Group"),
+        ];
+        
+        $this->career   = [
+            'GRAD'  => __("Undergraduate"),
+            'PGRAD' => __("Postgraduate")
+        ];
+        
+        $this->ei = new EasyInputs(
+            [
+            'name'  => 'Course',
+            'type'  => 'meta'
+            ]
+        );
+        
+        add_action('save_post', [&$this, 'saveDetails']);
+        add_action('save_post', [&$this, 'saveNumber']);
+        add_action('save_post', [&$this, 'saveDescription']);
+        add_action('save_post', [&$this, 'saveSchedule']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueue_uploader']);
     }
 }
 
