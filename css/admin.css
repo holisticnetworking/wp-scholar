@@ -35,6 +35,11 @@
 	font-weight: 600;
 }
 
+label.radios {
+    display: block;
+    font-weight: 600;
+}
+
 .scholar_row input[type=text] {
 	width: 100%;
 }
@@ -48,3 +53,17 @@ legend {
 .scholar_prototype {
     display: none;
 }
+
+.days_of_week .checkboxes {
+    display: inline-block;
+}
+
+.days_of_week .checkboxes label {
+    margin-right: 8px;
+    display: inline-block;
+    background: transparent;
+}
+
+table td {
+    vertical-align: top;
+}   
