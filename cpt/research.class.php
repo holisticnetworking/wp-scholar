@@ -27,7 +27,7 @@ class Research
                 ),
             'description'   =>  'Research activities',
             'public'        => true,
-            'supports'      => array('editor', 'thumbnail'),
+            'supports'      => array('title', 'editor', 'thumbnail'),
             'taxonomies'    => array(),
             'has_archive'   => true
         ));

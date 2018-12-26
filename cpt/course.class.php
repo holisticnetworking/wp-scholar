@@ -45,7 +45,7 @@ class Course
     }
     
     
-    public static function addMetaBoxes()
+    public function addMetaBoxes()
     {
         add_meta_box('number', 'Course Numbers', [&$this, 'number'], 'course', 'side', 'high');
         add_meta_box('details', 'Course Details', [&$this, 'details'], 'course', 'normal', 'high');
@@ -53,7 +53,7 @@ class Course
         add_meta_box('schedule', 'Course Schedule', [&$this, 'schedule'], 'course', 'normal', 'high');
     }
     
-    public static function number($post)
+    public function number($post)
     {
         // Use nonce for verification
         echo $this->ei->Form->nonce('scholar_number_nonce');
@@ -97,24 +97,20 @@ class Course
             ]
         );
     }
-    public static function saveNumber($post_id)
+    public function saveNumber($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_number_nonce']) || 
             !$this->ei->Form->verifyNonce('scholar_number_nonce')) {
             return;
         }
-        $numbers    = get_post_meta($post_id, 'scholar_course_number', false);
+        // Remove previous values:
+        delete_post_meta($post_id, 'scholar_course_number');
         // Sanitize user input
         foreach($_POST['Course']['course_number'] as $number) :
             $number = sanitize_text_field($number);
             if(!empty($number)) :
-                // Save the data:
-                if(in_array($number, $numbers)) :
-                    update_post_meta($post_id, 'scholar_course_number', $number, $number);
-                else :
-                    add_post_meta($post_id, 'scholar_course_number', $number, false);
-                endif;
+                add_post_meta($post_id, 'scholar_course_number', $number, false);
             endif;
         endforeach;
     }
@@ -175,14 +171,14 @@ class Course
         update_post_meta($post_id, 'scholar_course_grading', $grading);
     }
     
-    public static function description($post)
+    public function description($post)
     {
         // Use nonce for verification
         echo $this->ei->Form->nonce('scholar_description_nonce');
         $description    = get_post_meta($post->ID, 'scholar_course_description', true);
         echo $this->ei->Form->input('scholar_course_description', ['type' => 'editor', 'value' => $description]);
     }
-    public static function saveDescription($post_id)
+    public function saveDescription($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_description_nonce']) || 
@@ -197,7 +193,7 @@ class Course
         update_post_meta($post_id, 'scholar_course_description', $description);
     }
     
-    public static function schedule($post)
+    public function schedule($post)
     {
         // Use nonce for verification
         echo $this->ei->Form->nonce('scholar_schedule_nonce');
@@ -285,7 +281,7 @@ class Course
         );
         echo '</table>';
     }
-    public static function saveSchedule($post_id)
+    public function saveSchedule($post_id)
     {
         // Refuse without valid nonce:
         if (! isset($_POST['scholar_schedule_nonce']) || 
